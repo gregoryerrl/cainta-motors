@@ -17,6 +17,16 @@
 	div :global(canvas) {
 		touch-action: none;
 		cursor: grab;
+		-webkit-user-drag: none;
+		-khtml-user-drag: none;
+		-moz-user-drag: none;
+		-o-user-drag: none;
+		user-drag: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		pointer-events: auto;
 	}
 	
 	div :global(canvas:active) {

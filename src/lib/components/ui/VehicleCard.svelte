@@ -13,34 +13,34 @@
 	};
 </script>
 
-<article class="group relative overflow-hidden rounded-lg bg-gray-900 transition-all hover:scale-105">
+<article class="group relative border border-gray-800 bg-black transition-all hover:border-gray-600">
 	<div class="aspect-[4/3] overflow-hidden">
 		<img
 			src={vehicle.image}
 			alt="{vehicle.brand} {vehicle.model} {vehicle.variant}"
-			class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+			class="h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-80"
 		/>
 	</div>
 	
 	<div class="p-6">
-		<div class="mb-2 text-sm font-medium text-red-500">{vehicle.category.toUpperCase()}</div>
-		<h3 class="text-2xl font-bold text-white">
+		<div class="mb-2 text-xs font-light tracking-widest text-red-900">{vehicle.category.toUpperCase()}</div>
+		<h3 class="text-xl font-thin text-white">
 			{vehicle.brand} {vehicle.model}
 		</h3>
-		<p class="text-lg text-gray-400">{vehicle.variant}</p>
+		<p class="text-sm font-thin text-gray-500">{vehicle.variant}</p>
 		
-		<div class="mt-4 flex items-center justify-between">
+		<div class="mt-6 flex items-end justify-between">
 			<div>
-				<p class="text-sm text-gray-500">Starting from</p>
-				<p class="text-2xl font-bold text-white">{formatPrice(vehicle.price)}</p>
+				<p class="text-xs font-thin text-gray-600">Starting from</p>
+				<p class="text-2xl font-thin text-white">{formatPrice(vehicle.price)}</p>
 			</div>
 			
 			<a
 				href="/models/{vehicle.slug}"
-				class="flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+				class="flex items-center gap-2 text-xs font-light tracking-wider text-gray-500 transition-colors hover:text-white"
 			>
-				View Details
-				<ArrowRight class="h-4 w-4" />
+				VIEW DETAILS
+				<ArrowRight class="h-3 w-3" />
 			</a>
 		</div>
 	</div>

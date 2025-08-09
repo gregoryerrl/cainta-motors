@@ -16,40 +16,40 @@
 	<nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="flex h-20 items-center justify-between">
 			<div class="flex items-center">
-				<a href="/" class="flex items-center space-x-2">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-600">
-						<span class="text-xl font-bold text-white">CM</span>
+				<a href="/" class="flex items-center space-x-3">
+					<div class="flex h-8 w-8 items-center justify-center border border-red-900">
+						<span class="text-sm font-light text-white">CM</span>
 					</div>
-					<span class="text-xl font-bold text-white">Cainta Motors</span>
+					<span class="text-sm font-light tracking-[0.2em] text-white">CAINTA MOTORS</span>
 				</a>
 			</div>
 
 			<div class="hidden md:block">
-				<div class="ml-10 flex items-baseline space-x-8">
+				<div class="ml-10 flex items-baseline space-x-10">
 					{#each navigation as item}
 						<a
 							href={item.href}
-							class="px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
+							class="text-xs font-light tracking-widest text-gray-400 transition-colors hover:text-white"
 						>
-							{item.name}
+							{item.name.toUpperCase()}
 						</a>
 					{/each}
 					<button
-						class="rounded-full bg-red-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+						class="border border-red-900 px-6 py-2 text-xs font-light tracking-widest text-white transition-all hover:bg-red-900/20"
 					>
-						Schedule Test Drive
+						TEST DRIVE
 					</button>
 				</div>
 			</div>
 
 			<button
 				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-				class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-white md:hidden"
+				class="inline-flex items-center justify-center p-2 text-gray-400 hover:text-white md:hidden"
 			>
 				{#if mobileMenuOpen}
-					<X class="h-6 w-6" />
+					<X class="h-5 w-5" />
 				{:else}
-					<Menu class="h-6 w-6" />
+					<Menu class="h-5 w-5" />
 				{/if}
 			</button>
 		</div>
@@ -57,20 +57,20 @@
 
 	{#if mobileMenuOpen}
 		<div transition:slide={{ duration: 200 }} class="md:hidden">
-			<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+			<div class="space-y-1 px-4 pb-4 pt-2">
 				{#each navigation as item}
 					<a
 						href={item.href}
 						onclick={() => (mobileMenuOpen = false)}
-						class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-900 hover:text-white"
+						class="block px-3 py-3 text-sm font-light tracking-widest text-gray-400 hover:text-white"
 					>
-						{item.name}
+						{item.name.toUpperCase()}
 					</a>
 				{/each}
 				<button
-					class="mt-4 w-full rounded-full bg-red-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+					class="mt-4 w-full border border-red-900 px-6 py-3 text-sm font-light tracking-widest text-white transition-all hover:bg-red-900/20"
 				>
-					Schedule Test Drive
+					TEST DRIVE
 				</button>
 			</div>
 		</div>

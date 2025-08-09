@@ -50,39 +50,34 @@
 	}
 </script>
 
-<T.PerspectiveCamera makeDefault position={[2, 0, 2]} fov={45} near={0.1} far={100}>
+<T.PerspectiveCamera makeDefault position={[4, 1, 4]} fov={45} near={0.1} far={100}>
 	<OrbitControls
 		enablePan={false}
-		enableZoom={true}
+		enableZoom={false}
 		enableDamping={true}
 		dampingFactor={0.05}
 		rotateSpeed={0.8}
-		zoomSpeed={1.2}
-		minDistance={1.2}
-		maxDistance={6}
 		maxPolarAngle={Math.PI / 2}
 		minPolarAngle={0.1}
-		target={[0, 0, 0.6]}
+		target={[0, 0, 0]}
 		{autoRotate}
 		autoRotateSpeed={1.0}
 		on:start={() => {
 			autoRotate = false;
-			console.log('User interaction - stopping auto-rotation');
 		}}
 		on:end={() => {
-			// Resume auto-rotation after 3 seconds of no interaction
 			setTimeout(() => {
 				autoRotate = true;
-				console.log('Resuming auto-rotation');
 			}, 3000);
 		}}
 	/>
 </T.PerspectiveCamera>
 
-<!-- Enhanced lighting for better material visibility -->
+<!-- Enhanced lighting setup for premium automotive showcase -->
+<!-- Main key light (from front-right) -->
 <T.DirectionalLight
 	position={[10, 15, 10]}
-	intensity={2}
+	intensity={2.5}
 	castShadow
 	shadow.camera.left={-10}
 	shadow.camera.right={10}
@@ -92,19 +87,34 @@
 	shadow.mapSize.height={2048}
 />
 
-<T.DirectionalLight position={[-10, 10, -10]} intensity={1} />
+<!-- Fill light (from back-left) -->
+<T.DirectionalLight position={[-8, 12, -8]} intensity={1.2} />
 
-<T.AmbientLight intensity={0.8} />
+<!-- Rim light (from behind) -->
+<T.DirectionalLight position={[0, 8, -15]} intensity={1.8} />
 
-<T.SpotLight position={[5, 10, 5]} angle={0.3} penumbra={0.5} intensity={1.5} castShadow />
+<!-- Ambient base lighting -->
+<T.AmbientLight intensity={0.6} />
 
-<T.SpotLight position={[-5, 10, -5]} angle={0.3} penumbra={0.5} intensity={1} />
+<!-- Front accent spotlights -->
+<T.SpotLight position={[6, 8, 6]} angle={0.4} penumbra={0.6} intensity={2} castShadow />
+<T.SpotLight position={[-6, 8, 6]} angle={0.4} penumbra={0.6} intensity={1.8} />
+
+<!-- Side highlighting -->
+<T.SpotLight position={[12, 6, 0]} angle={0.5} penumbra={0.7} intensity={1.5} />
+<T.SpotLight position={[-12, 6, 0]} angle={0.5} penumbra={0.7} intensity={1.3} />
+
+<!-- Ground/undercarriage lighting -->
+<T.SpotLight position={[0, 2, 8]} angle={0.8} penumbra={0.8} intensity={1} />
+
+<!-- Rear accent light -->
+<T.SpotLight position={[0, 10, -8]} angle={0.6} penumbra={0.5} intensity={1.2} />
 
 <!-- Wrapper group to center the model properly -->
 <T.Group>
 	<GLTF
-		url="/honda_city_rs.glb"
-		scale={1.2}
+		url="/mercedes-benz_maybach_2022.glb"
+		scale={0.5}
 		position={[centerOffset.x, centerOffset.y, centerOffset.z]}
 		castShadow
 		receiveShadow

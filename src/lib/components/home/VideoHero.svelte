@@ -46,9 +46,9 @@
 		{#if mounted}
 			<div transition:fade={{ delay: 500, duration: 1200 }}>
 				<h1 class="mb-6 text-6xl font-thin text-white md:text-7xl lg:text-8xl">
-					<span class="block tracking-widest">CAINTA MOTORS</span>
+					<span class="block tracking-[0.3em]">CAINTA MOTORS</span>
 					<span
-						class="block text-4xl font-thin tracking-wider text-gray-200 md:text-5xl lg:text-6xl"
+						class="block text-3xl font-thin tracking-[0.2em] text-gray-400 md:text-4xl lg:text-5xl"
 					>
 						Premium Automotive Excellence
 					</span>
@@ -56,28 +56,28 @@
 			</div>
 
 			<div transition:fly={{ y: 30, delay: 800, duration: 1000 }}>
-				<p class="mx-auto mb-10 max-w-3xl text-xl font-thin text-gray-200 md:text-2xl">
-					Experience the perfect fusion of luxury, performance, and innovation. Discover vehicles
-					that redefine automotive excellence.
+				<p class="mx-auto mb-10 max-w-3xl text-lg font-thin text-gray-400 md:text-xl">
+					Experience the perfect fusion of luxury, performance, and innovation.<br />
+					Discover vehicles that redefine automotive excellence.
 				</p>
 			</div>
 
 			<div
 				transition:fly={{ y: 30, delay: 1100, duration: 1000 }}
-				class="flex flex-col gap-6 sm:flex-row"
+				class="flex flex-col gap-8 sm:flex-row"
 				style="pointer-events: auto;"
 			>
 				<a
 					href="/models"
-					class="rounded-full bg-red-600 px-10 py-4 text-xl font-semibold text-white shadow-2xl transition-all hover:scale-105 hover:bg-red-700"
+					class="border border-red-900 px-12 py-3 text-sm font-light tracking-widest text-white transition-all hover:bg-red-900/20 hover:border-red-800"
 				>
-					Explore Our Models
+					EXPLORE MODELS
 				</a>
 				<a
 					href="/configurator"
-					class="rounded-full border-2 border-white px-10 py-4 text-xl font-semibold text-white shadow-2xl transition-all hover:bg-white hover:text-black"
+					class="border border-gray-600 px-12 py-3 text-sm font-light tracking-widest text-gray-400 transition-all hover:border-white hover:text-white"
 				>
-					Build Your Car
+					CONFIGURE
 				</a>
 			</div>
 		{/if}
