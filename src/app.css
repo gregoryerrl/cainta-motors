@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+* {
+	scroll-behavior: smooth;
+}
+
+body {
+	background-color: #000;
+	color: #fff;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #dc2626;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #b91c1c;
+}
+
+.grayscale {
+	filter: grayscale(100%) contrast(1.2);
+	transition: filter 0.3s;
+}
+
+.grayscale:hover {
+	filter: grayscale(0%) contrast(1);
+}
