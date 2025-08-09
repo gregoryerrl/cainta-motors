@@ -50,7 +50,7 @@
 	}
 </script>
 
-<T.PerspectiveCamera makeDefault position={[2.5, 1.8, 2.5]} fov={45} near={0.1} far={100}>
+<T.PerspectiveCamera makeDefault position={[2, 0, 2]} fov={45} near={0.1} far={100}>
 	<OrbitControls
 		enablePan={false}
 		enableZoom={true}
