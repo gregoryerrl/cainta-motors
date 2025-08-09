@@ -1,5 +1,0 @@
-# Cloudflare Pages Redirects Configuration
-# https://developers.cloudflare.com/pages/platform/redirects/
-
-# SPA fallback for client-side routing
-/* /index.html 200

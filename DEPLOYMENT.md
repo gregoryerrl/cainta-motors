@@ -1,56 +1,63 @@
-# 🚀 Cloudflare Pages Deployment Guide
+# 🚀 Vercel Deployment Guide
 
 ## Prerequisites
-- [Cloudflare account](https://cloudflare.com)
+- [Vercel account](https://vercel.com)
 - Git repository (GitHub, GitLab, or Bitbucket)
 
 ## Deployment Options
 
 ### Option 1: Git Integration (Recommended)
 1. Push your code to a Git repository
-2. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
-3. Navigate to **Workers & Pages** > **Pages**
-4. Click **Create** > **Connect to Git**
-5. Select your repository and branch
-6. Configure build settings:
-   - **Framework preset**: None (manual configuration)
+2. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+3. Click **Add New** > **Project**
+4. Import your Git repository
+5. Vercel will automatically detect SvelteKit and configure:
+   - **Framework**: SvelteKit
    - **Build command**: `npm run build`
-   - **Build output directory**: `.svelte-kit/output/client`
-   - **Root directory**: `/` (leave empty)
-   - **Environment variables**: 
-     - `NODE_VERSION`: `18`
+   - **Output directory**: Automatically detected
+   - **Install command**: `npm install`
 
-### Option 2: Manual Deploy (Alternative)
-If Git integration fails, you can deploy manually:
-1. Run `npm run build` locally
-2. Go to Cloudflare Pages dashboard
-3. Click **Upload assets** and upload the `.svelte-kit/output/client` folder
+### Option 2: Vercel CLI (Alternative)
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy from project root
+vercel
+
+# Follow the prompts for configuration
+```
 
 ## Build Configuration Details
 
-### Required Environment Variables
-Set these in Cloudflare Pages under **Settings** > **Environment variables**:
-- `NODE_VERSION`: `18` (recommended)
+### Automatic Detection
+Vercel automatically detects SvelteKit projects and configures optimal settings:
+- **Build command**: `npm run build`
+- **Output directory**: `.svelte-kit/output` (automatically handled)
+- **Node.js version**: Latest stable (18.x+)
+- **Framework**: SvelteKit preset with optimizations
 
-### Build Settings Summary
-- **Build command**: `npm run build` 
-- **Build output directory**: `.svelte-kit/output/client`
-- **Node.js version**: `18.x`
+### Environment Variables (Optional)
+Set these in Vercel dashboard under **Settings** > **Environment Variables**:
+- `NODE_VERSION`: `18` (if you need to specify)
 
 ## Performance Features Configured
 
-### 🎯 HTTP Headers (`_headers`)
-- Security headers (X-Content-Type-Options, X-Frame-Options)
+### 🎯 HTTP Headers (`vercel.json`)
+- Security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
 - Aggressive caching for static assets (1 year)
 - Optimized caching for 3D models and videos
 
-### 🔄 Redirects (`_redirects`)
-- SPA fallback for client-side routing
-
 ### ⚡ Build Optimization
-- Cloudflare adapter configured in `svelte.config.js`
+- Vercel adapter configured in `svelte.config.js`
 - Production-optimized builds with code splitting
-- Static assets in `/static/` served with optimal caching
+- Static assets served with optimal caching
+- Edge functions for dynamic routes (if needed)
+
+### 🌍 Global Edge Network
+- Automatic deployment to Vercel's global edge network
+- Optimal performance worldwide
+- Built-in CDN for static assets
 
 ## Performance Metrics
 Current build output:
@@ -69,31 +76,55 @@ Current build output:
 
 ## Troubleshooting
 
-### Build Fails with wrangler.toml error
-- **Solution**: Remove any `wrangler.toml` file from your project root
-- Use Git integration instead of CLI deployment for Pages
-
-### _headers or _redirects file location error
-- **Solution**: Move `_headers` and `_redirects` files to project root (not `/static/`)
-- Cloudflare Pages expects these files in the root directory
-
 ### Build Fails with Node.js version
-- Set `NODE_VERSION` environment variable to `18` in Pages settings
+- Vercel uses Node.js 18.x by default
+- Set `NODE_VERSION` environment variable if needed
 - Ensure all dependencies are in `dependencies` (not `devDependencies`)
 
 ### 3D Models Don't Load
 - Verify `.glb` files are in `/static/` directory  
-- Check browser console for CORS errors
+- Check browser console for network errors
 - Ensure correct file paths in components
+- Vercel serves static files from `/static/` automatically
 
 ### Smooth Scrolling Issues
 - Lenis library should work automatically
 - Check browser console for JavaScript errors
 - Verify `autoRaf: true` configuration
 
-## Domain Setup
-1. **Custom Domain**: Go to **Custom domains** in Pages settings
-2. **DNS**: Configure CNAME record pointing to your Pages domain
-3. **SSL**: Automatically handled by Cloudflare
+### Build Fails with Import Errors
+- Check that all imports use correct paths
+- Ensure TypeScript types are properly configured
+- Verify `$lib` alias is working correctly
 
-Your Cainta Motors site is now ready for production! 🏎️✨
+## Domain Setup
+1. **Custom Domain**: Go to **Domains** in project settings
+2. **DNS**: Add domain and configure DNS records as shown
+3. **SSL**: Automatically handled by Vercel
+4. **Redirects**: Configure www/non-www redirects if needed
+
+## Deployment Commands
+```bash
+# Deploy to production
+vercel --prod
+
+# Deploy preview (branch deployments)
+git push origin feature-branch  # Automatic preview deployment
+
+# Local development with Vercel functions
+vercel dev
+```
+
+## Vercel-Specific Features
+- **Preview Deployments**: Every branch gets a preview URL
+- **Analytics**: Built-in web analytics and performance monitoring  
+- **Functions**: Serverless functions for dynamic features (if needed)
+- **Edge Runtime**: Ultra-fast edge functions for dynamic content
+
+Your Cainta Motors site is now ready for production on Vercel! 🏎️✨
+
+## Migration Notes
+- Migrated from Cloudflare Pages to Vercel
+- Removed `_headers` and `_redirects` (replaced with `vercel.json`)
+- Switched from `@sveltejs/adapter-cloudflare` to `@sveltejs/adapter-vercel`
+- All existing features maintained with improved global performance
