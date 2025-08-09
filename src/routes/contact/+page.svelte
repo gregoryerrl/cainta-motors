@@ -67,7 +67,7 @@
 										id="name"
 										bind:value={formData.name}
 										required
-										class="mt-2 w-full border border-gray-700 bg-gray-800 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
+										class="mt-2 w-full border border-gray-700 bg-white/6 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
 									/>
 								</div>
 								<div>
@@ -82,7 +82,7 @@
 										id="email"
 										bind:value={formData.email}
 										required
-										class="mt-2 w-full border border-gray-700 bg-gray-800 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
+										class="mt-2 w-full border border-gray-700 bg-white/6 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
 									/>
 								</div>
 							</div>
@@ -99,7 +99,7 @@
 										type="tel"
 										id="phone"
 										bind:value={formData.phone}
-										class="mt-2 w-full border border-gray-700 bg-gray-800 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
+										class="mt-2 w-full border border-gray-700 bg-white/6 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
 									/>
 								</div>
 								<div>
@@ -113,7 +113,7 @@
 										id="subject"
 										bind:value={formData.subject}
 										required
-										class="mt-2 w-full border border-gray-700 bg-gray-800 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
+										class="mt-2 w-full border border-gray-700 bg-white/6 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
 									>
 										<option value="general">General Inquiry</option>
 										<option value="sales">Sales Inquiry</option>
@@ -136,7 +136,7 @@
 									bind:value={formData.message}
 									required
 									rows="5"
-									class="mt-2 w-full border border-gray-700 bg-gray-800 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
+									class="mt-2 w-full border border-gray-700 bg-white/6 px-4 py-3 font-thin text-white focus:border-red-900 focus:outline-none"
 								></textarea>
 							</div>
 

@@ -35,12 +35,10 @@
 	];
 </script>
 
-<section class="bg-gray-900 py-24">
+<section class="bg-white/6 py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="text-center">
-			<h2 class="text-4xl font-bold text-white md:text-5xl">
-				Engineered for Excellence
-			</h2>
+			<h2 class="text-4xl font-bold text-white md:text-5xl">Engineered for Excellence</h2>
 			<p class="mt-4 text-xl text-gray-400">
 				Every detail crafted to deliver an exceptional driving experience
 			</p>
@@ -48,8 +46,12 @@
 
 		<div class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 			{#each features as feature}
-				<div class="group relative overflow-hidden rounded-lg bg-gray-800 p-8 transition-all hover:bg-gray-700">
-					<div class="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+				<div
+					class="group relative overflow-hidden rounded-lg bg-white/6 p-8 transition-all hover:bg-gray-700"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+					/>
 					<div class="relative">
 						<div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10">
 							<svelte:component this={feature.icon} class="h-6 w-6 text-red-500" />

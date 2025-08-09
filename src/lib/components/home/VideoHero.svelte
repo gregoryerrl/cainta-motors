@@ -79,7 +79,7 @@
 			>
 				<a
 					href="/models"
-					class="border border-red-900 px-12 py-3 text-sm font-light tracking-widest text-white transition-all hover:bg-red-900/20 hover:border-red-800"
+					class="border border-red-900 px-12 py-3 text-sm font-light tracking-widest text-white transition-all hover:border-red-800 hover:bg-red-900/20"
 				>
 					EXPLORE MODELS
 				</a>
@@ -94,15 +94,6 @@
 	</div>
 
 	<!-- Scroll Indicator -->
-	<button
-		type="button"
-		class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce scroll-indicator cursor-pointer p-2 rounded-full focus:outline-none"
-		onclick={handleScrollToNext}
-		aria-label="Scroll to next section"
-		title="Scroll to next section"
-	>
-		<ChevronDown class="h-8 w-8 text-white/70 transition-colors duration-300 hover:text-white" />
-	</button>
 </section>
 
 <style>

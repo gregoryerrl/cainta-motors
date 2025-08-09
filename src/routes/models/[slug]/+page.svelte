@@ -34,19 +34,18 @@
 <section class="min-h-screen bg-black">
 	<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 		<nav class="mb-8">
-			<a href="/models" class="text-gray-400 hover:text-white">
-				← Back to Models
-			</a>
+			<a href="/models" class="text-gray-400 hover:text-white"> ← Back to Models </a>
 		</nav>
 
 		<div class="grid grid-cols-1 gap-12 lg:grid-cols-2">
 			<div>
 				<div class="sticky top-24">
 					<h1 class="text-4xl font-bold text-white md:text-5xl">
-						{vehicle.brand} {vehicle.model}
+						{vehicle.brand}
+						{vehicle.model}
 					</h1>
 					<p class="mt-2 text-2xl text-gray-400">{vehicle.variant}</p>
-					
+
 					<div class="mt-8">
 						<p class="text-sm text-gray-500">Starting from</p>
 						<p class="text-4xl font-bold text-white">{formatPrice(vehicle.price)}</p>
@@ -57,21 +56,21 @@
 						<div class="flex gap-3">
 							{#each vehicle.colors as color}
 								<button
-									onclick={() => selectedColor = color}
-									class="relative h-12 w-12 rounded-full border-2 transition-all {
-										selectedColor.hex === color.hex
-											? 'border-red-600 scale-110'
-											: 'border-gray-600'
-									}"
+									onclick={() => (selectedColor = color)}
+									class="relative h-12 w-12 rounded-full border-2 transition-all {selectedColor.hex ===
+									color.hex
+										? 'scale-110 border-red-600'
+										: 'border-gray-600'}"
 									style="background-color: {color.hex}"
 									title={color.name}
 								>
 									{#if selectedColor.hex === color.hex}
-										<Check class="absolute inset-0 m-auto h-6 w-6 {
-											color.hex === '#000000' || color.hex === '#4a4a4a' 
-												? 'text-white' 
-												: 'text-black'
-										}" />
+										<Check
+											class="absolute inset-0 m-auto h-6 w-6 {color.hex === '#000000' ||
+											color.hex === '#4a4a4a'
+												? 'text-white'
+												: 'text-black'}"
+										/>
 									{/if}
 								</button>
 							{/each}
@@ -110,28 +109,28 @@
 
 			<div class="space-y-8">
 				{#if vehicle.modelPath}
-					<div class="aspect-video overflow-hidden rounded-lg bg-gray-900">
+					<div class="aspect-video overflow-hidden rounded-lg bg-white/6">
 						<Scene class="h-full w-full" />
 					</div>
 				{/if}
 
-				<div class="relative aspect-video overflow-hidden rounded-lg bg-gray-900">
+				<div class="relative aspect-video overflow-hidden rounded-lg bg-white/6">
 					<img
 						src={vehicle.images[currentImageIndex]}
 						alt="{vehicle.brand} {vehicle.model}"
 						class="h-full w-full object-cover"
 					/>
-					
+
 					{#if vehicle.images.length > 1}
 						<button
 							onclick={prevImage}
-							class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 backdrop-blur-sm hover:bg-white/20"
+							class="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/10 p-2 backdrop-blur-sm hover:bg-white/20"
 						>
 							<ChevronLeft class="h-6 w-6 text-white" />
 						</button>
 						<button
 							onclick={nextImage}
-							class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 backdrop-blur-sm hover:bg-white/20"
+							class="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/10 p-2 backdrop-blur-sm hover:bg-white/20"
 						>
 							<ChevronRight class="h-6 w-6 text-white" />
 						</button>
@@ -141,18 +140,12 @@
 				<div class="grid grid-cols-4 gap-2">
 					{#each vehicle.images as image, index}
 						<button
-							onclick={() => currentImageIndex = index}
-							class="aspect-video overflow-hidden rounded-lg {
-								currentImageIndex === index
-									? 'ring-2 ring-red-600'
-									: 'opacity-60 hover:opacity-100'
-							}"
+							onclick={() => (currentImageIndex = index)}
+							class="aspect-video overflow-hidden rounded-lg {currentImageIndex === index
+								? 'ring-2 ring-red-600'
+								: 'opacity-60 hover:opacity-100'}"
 						>
-							<img
-								src={image}
-								alt="Thumbnail {index + 1}"
-								class="h-full w-full object-cover"
-							/>
+							<img src={image} alt="Thumbnail {index + 1}" class="h-full w-full object-cover" />
 						</button>
 					{/each}
 				</div>
@@ -161,15 +154,15 @@
 
 		<div class="mt-16">
 			<button
-				onclick={() => showSpecs = !showSpecs}
-				class="mb-8 rounded-full bg-gray-800 px-6 py-3 text-white hover:bg-gray-700"
+				onclick={() => (showSpecs = !showSpecs)}
+				class="mb-8 rounded-full bg-white/6 px-6 py-3 text-white hover:bg-gray-700"
 			>
 				{showSpecs ? 'Hide' : 'Show'} Specifications
 			</button>
 
 			{#if showSpecs}
 				<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-					<div class="rounded-lg bg-gray-900 p-6">
+					<div class="rounded-lg bg-white/6 p-6">
 						<h3 class="mb-4 text-lg font-semibold text-white">Engine</h3>
 						<dl class="space-y-2">
 							<div>
@@ -187,7 +180,7 @@
 						</dl>
 					</div>
 
-					<div class="rounded-lg bg-gray-900 p-6">
+					<div class="rounded-lg bg-white/6 p-6">
 						<h3 class="mb-4 text-lg font-semibold text-white">Transmission</h3>
 						<dl class="space-y-2">
 							<div>
@@ -205,7 +198,7 @@
 						</dl>
 					</div>
 
-					<div class="rounded-lg bg-gray-900 p-6">
+					<div class="rounded-lg bg-white/6 p-6">
 						<h3 class="mb-4 text-lg font-semibold text-white">Dimensions</h3>
 						<dl class="space-y-2">
 							<div>
