@@ -96,18 +96,4 @@
 	<!-- Scroll Indicator -->
 </section>
 
-<style>
-	@keyframes bounce {
-		0%,
-		100% {
-			transform: translateY(0) translateX(-50%);
-		}
-		50% {
-			transform: translateY(-10px) translateX(-50%);
-		}
-	}
-
-	.animate-bounce {
-		animation: bounce 2s infinite;
-	}
-</style>
+<!-- Unused CSS removed - scroll indicator uses Tailwind's animate-bounce -->
