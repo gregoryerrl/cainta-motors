@@ -13,35 +13,29 @@
 4. Click **Create** > **Connect to Git**
 5. Select your repository and branch
 6. Configure build settings:
-   - **Framework**: SvelteKit
+   - **Framework preset**: None (manual configuration)
    - **Build command**: `npm run build`
-   - **Output directory**: `.svelte-kit/output/client`
+   - **Build output directory**: `.svelte-kit/output/client`
    - **Root directory**: `/` (leave empty)
-   - **Node.js version**: `18` or `20`
+   - **Environment variables**: 
+     - `NODE_VERSION`: `18`
 
-### Option 2: Wrangler CLI
-```bash
-# Install Wrangler globally
-npm install -g wrangler
+### Option 2: Manual Deploy (Alternative)
+If Git integration fails, you can deploy manually:
+1. Run `npm run build` locally
+2. Go to Cloudflare Pages dashboard
+3. Click **Upload assets** and upload the `.svelte-kit/output/client` folder
 
-# Login to Cloudflare
-wrangler login
+## Build Configuration Details
 
-# Deploy directly
-npm run build
-wrangler pages deploy .svelte-kit/output/client --project-name cainta-motors
-```
+### Required Environment Variables
+Set these in Cloudflare Pages under **Settings** > **Environment variables**:
+- `NODE_VERSION`: `18` (recommended)
 
-## Build Configuration
-
-### Environment Variables
-Set in Cloudflare Pages dashboard under **Settings** > **Environment variables**:
-- `NODE_VERSION`: `18` or `20`
-
-### Build Settings
-- **Build command**: `npm run build`
-- **Output directory**: `.svelte-kit/output/client`
-- **Node.js version**: `18.x` or `20.x`
+### Build Settings Summary
+- **Build command**: `npm run build` 
+- **Build output directory**: `.svelte-kit/output/client`
+- **Node.js version**: `18.x`
 
 ## Performance Features Configured
 
@@ -75,18 +69,23 @@ Current build output:
 
 ## Troubleshooting
 
-### Build Fails
-- Ensure Node.js version is 18+ in Cloudflare Pages settings
-- Check that all dependencies are in `dependencies` (not `devDependencies`)
+### Build Fails with wrangler.toml error
+- **Solution**: Remove any `wrangler.toml` file from your project root
+- Use Git integration instead of CLI deployment for Pages
+
+### Build Fails with Node.js version
+- Set `NODE_VERSION` environment variable to `18` in Pages settings
+- Ensure all dependencies are in `dependencies` (not `devDependencies`)
 
 ### 3D Models Don't Load
-- Verify `.glb` files are in `/static/` directory
-- Check console for CORS errors
+- Verify `.glb` files are in `/static/` directory  
+- Check browser console for CORS errors
 - Ensure correct file paths in components
 
-### Large Bundle Size Warning
-- The Three.js library is large but necessary for 3D functionality
-- Consider implementing dynamic imports if bundle size becomes critical
+### Smooth Scrolling Issues
+- Lenis library should work automatically
+- Check browser console for JavaScript errors
+- Verify `autoRaf: true` configuration
 
 ## Domain Setup
 1. **Custom Domain**: Go to **Custom domains** in Pages settings
