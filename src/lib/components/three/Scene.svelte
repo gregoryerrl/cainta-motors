@@ -2,7 +2,7 @@
 	import { Canvas } from '@threlte/core';
 	import { interactivity } from '@threlte/extras';
 	import ModelViewer from './ModelViewer.svelte';
-	
+
 	let { class: className = '' } = $props();
 </script>
 
@@ -28,7 +28,7 @@
 		user-select: none;
 		pointer-events: auto;
 	}
-	
+
 	div :global(canvas:active) {
 		cursor: grabbing;
 	}

@@ -35,9 +35,7 @@
 			Engineering<br />
 			<span class="text-red-900">Excellence</span>
 		</h2>
-		<p class="mt-4 text-base font-thin text-gray-500">
-			Where innovation meets precision
-		</p>
+		<p class="mt-4 text-base font-thin text-gray-500">Where innovation meets precision</p>
 	</div>
 
 	<div class="mt-12 grid grid-cols-2 gap-6">
@@ -47,16 +45,18 @@
 					<div class="flex h-8 w-8 items-center justify-center border border-red-900/50">
 						<svelte:component this={item.icon} class="h-4 w-4 text-red-900" />
 					</div>
-					<h3 class="mt-4 text-sm font-light tracking-wider text-gray-400">{item.title.toUpperCase()}</h3>
+					<h3 class="mt-4 text-sm font-light tracking-wider text-gray-400">
+						{item.title.toUpperCase()}
+					</h3>
 					<p class="text-2xl font-thin text-white">{item.metric}</p>
-					<p class="text-xs font-thin text-gray-600 tracking-wider">{item.detail}</p>
+					<p class="text-xs font-thin tracking-wider text-gray-600">{item.detail}</p>
 				</div>
 			</div>
 		{/each}
 	</div>
 
 	<div class="mt-12">
-		<p class="font-thin text-gray-500 leading-relaxed">
+		<p class="leading-relaxed font-thin text-gray-500">
 			Every component meticulously engineered to deliver an uncompromising driving experience.
 		</p>
 		<div class="mt-8 flex gap-6">

@@ -18,12 +18,12 @@ export function createParallaxEffect(element: HTMLElement, speed: number = 0.5) 
 		const rect = element.getBoundingClientRect();
 		const scrolled = window.scrollY;
 		const rate = scrolled * speed;
-		
+
 		// Only apply parallax when element is in viewport
 		if (rect.bottom >= 0 && rect.top <= window.innerHeight) {
 			element.style.transform = `translate3d(0, ${rate}px, 0)`;
 		}
-		
+
 		ticking = false;
 	}
 
@@ -47,10 +47,7 @@ export function createParallaxEffect(element: HTMLElement, speed: number = 0.5) 
 /**
  * Fade in elements as they come into view
  */
-export function createFadeInOnScroll(
-	element: HTMLElement, 
-	options: ScrollAnimationOptions = {}
-) {
+export function createFadeInOnScroll(element: HTMLElement, options: ScrollAnimationOptions = {}) {
 	const { threshold = 0.1, rootMargin = '0px', once = true } = options;
 
 	const observer = new IntersectionObserver(
@@ -83,10 +80,7 @@ export function createFadeInOnScroll(
 /**
  * Scale elements as they come into view
  */
-export function createScaleOnScroll(
-	element: HTMLElement,
-	options: ScrollAnimationOptions = {}
-) {
+export function createScaleOnScroll(element: HTMLElement, options: ScrollAnimationOptions = {}) {
 	const { threshold = 0.2, rootMargin = '0px', once = true } = options;
 
 	const observer = new IntersectionObserver(
@@ -156,7 +150,8 @@ export function createSlideInOnScroll(
  */
 export function createScrollProgressBar(element: HTMLElement) {
 	function updateProgress() {
-		const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+		const scrollPercent =
+			(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
 		element.style.transform = `scaleX(${Math.min(scrollPercent, 100)}%)`;
 	}
 

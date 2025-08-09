@@ -1,10 +1,42 @@
 <script lang="ts">
 	import { T } from '@threlte/core';
 	import { OrbitControls, GLTF } from '@threlte/extras';
+	import { getContext, onMount } from 'svelte';
 	import * as THREE from 'three';
 
 	let centerOffset = $state({ x: 0, y: 0, z: 0 });
 	let autoRotate = $state(true);
+
+	// Get loading context to report 3D model loading status
+	const loadingContext = getContext<{
+		registerAsset: (id: string) => void;
+		updateAsset: (
+			id: string,
+			status: 'pending' | 'loading' | 'loaded' | 'error',
+			progress?: number
+		) => void;
+	}>('loading');
+
+	// Register 3D model asset on mount
+	onMount(() => {
+		if (loadingContext) {
+			loadingContext.registerAsset('3d-model');
+		}
+	});
+
+	// Update loading status when model starts loading
+	function handleProgress() {
+		if (loadingContext) {
+			loadingContext.updateAsset('3d-model', 'loading');
+		}
+	}
+
+	// Handle loading errors
+	function handleError() {
+		if (loadingContext) {
+			loadingContext.updateAsset('3d-model', 'error');
+		}
+	}
 
 	// Center the model when it loads - force center for vehicle
 	function handleLoad(e: any) {
@@ -39,6 +71,11 @@
 				}
 			}
 		});
+
+		// Report model as loaded
+		if (loadingContext) {
+			loadingContext.updateAsset('3d-model', 'loaded');
+		}
 
 		console.log('=== MODEL CENTERING DEBUG ===');
 		console.log('Bounding box min:', min);
@@ -119,5 +156,7 @@
 		castShadow
 		receiveShadow
 		on:load={handleLoad}
+		on:progress={handleProgress}
+		on:error={handleError}
 	/>
 </T.Group>

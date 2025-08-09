@@ -17,7 +17,7 @@
 
 		// Initialize Lenis with autoRaf (recommended approach)
 		lenis = new Lenis({
-			autoRaf: true,           // Let Lenis handle its own RAF loop
+			autoRaf: true // Let Lenis handle its own RAF loop
 		});
 
 		// Debug: log scroll events to verify it's working
@@ -30,7 +30,7 @@
 
 	onDestroy(() => {
 		console.log('Cleaning up Lenis');
-		
+
 		// Destroy Lenis instance (autoRaf cleanup is handled automatically)
 		lenis?.destroy();
 		lenis = null;
@@ -46,7 +46,7 @@
 		if (lenis) {
 			lenis.scrollTo(target, {
 				offset,
-				duration: 1.2,
+				duration: 1.2
 			});
 		}
 	}

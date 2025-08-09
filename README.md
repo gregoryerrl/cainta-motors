@@ -5,6 +5,7 @@ A premium automotive website showcasing luxury vehicles with cutting-edge 3D vis
 ## Overview
 
 Cainta Motors is a sophisticated web platform dedicated to the automotive industry, featuring:
+
 - Interactive 3D car models powered by Three.js
 - High-resolution automotive photography
 - Immersive user experience with smooth animations
@@ -33,7 +34,7 @@ Cainta Motors is a sophisticated web platform dedicated to the automotive indust
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or pnpm
 
 ### Installation

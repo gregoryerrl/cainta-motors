@@ -57,7 +57,7 @@
 
 	{#if mobileMenuOpen}
 		<div transition:slide={{ duration: 200 }} class="md:hidden">
-			<div class="space-y-1 px-4 pb-4 pt-2">
+			<div class="space-y-1 px-4 pt-2 pb-4">
 				{#each navigation as item}
 					<a
 						href={item.href}

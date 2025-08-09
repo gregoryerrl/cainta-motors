@@ -45,7 +45,6 @@ body {
 	}
 }
 
-
 ::-webkit-scrollbar {
 	width: 10px;
 	height: 10px;
@@ -83,7 +82,9 @@ a:focus-visible {
 
 /* Enhanced scroll indicator animation */
 .scroll-indicator {
-	transition: transform 0.3s ease, color 0.3s ease;
+	transition:
+		transform 0.3s ease,
+		color 0.3s ease;
 }
 
 .scroll-indicator:hover {
@@ -132,7 +133,9 @@ canvas {
 .fade-in-hidden {
 	opacity: 0;
 	transform: translateY(20px);
-	transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out;
 }
 
 .fade-in-visible {
@@ -143,7 +146,9 @@ canvas {
 .scale-in-hidden {
 	opacity: 0;
 	transform: scale(0.9);
-	transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out;
 }
 
 .scale-in-visible {
@@ -153,7 +158,9 @@ canvas {
 
 .slide-in-hidden {
 	opacity: 0;
-	transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out;
 }
 
 .slide-in-up {
@@ -197,7 +204,7 @@ canvas {
 		-webkit-overflow-scrolling: touch;
 		overscroll-behavior: none;
 	}
-	
+
 	/* Reduce motion on mobile if needed */
 	.fade-in-hidden,
 	.scale-in-hidden,
@@ -214,7 +221,7 @@ canvas {
 	.slide-in-hidden {
 		transition-duration: 0.5s;
 	}
-	
+
 	/* Reduce parallax on touch devices for better performance */
 	.parallax-container {
 		transform: none !important;

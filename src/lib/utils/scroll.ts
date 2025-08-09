@@ -12,10 +12,7 @@ export interface ScrollOptions {
 /**
  * Smoothly scroll to an element by ID
  */
-export function scrollToElement(
-	elementId: string,
-	options: ScrollOptions = {}
-): Promise<void> {
+export function scrollToElement(elementId: string, options: ScrollOptions = {}): Promise<void> {
 	return new Promise((resolve) => {
 		const element = document.getElementById(elementId);
 		if (!element) {
@@ -24,12 +21,7 @@ export function scrollToElement(
 			return;
 		}
 
-		const {
-			behavior = 'smooth',
-			block = 'start',
-			inline = 'nearest',
-			offset = 0
-		} = options;
+		const { behavior = 'smooth', block = 'start', inline = 'nearest', offset = 0 } = options;
 
 		// Calculate the target position with offset
 		const elementRect = element.getBoundingClientRect();
@@ -58,13 +50,7 @@ export function scrollToElement(
  * Smoothly scroll to the next section
  */
 export function scrollToNextSection(currentSectionId?: string): void {
-	const sections = [
-		'hero',
-		'showcase',
-		'models',
-		'gallery',
-		'cta'
-	];
+	const sections = ['hero', 'showcase', 'models', 'gallery', 'cta'];
 
 	if (!currentSectionId) {
 		// If no current section, scroll to first section

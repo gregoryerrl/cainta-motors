@@ -16,12 +16,60 @@
 	let mounted = $state(false);
 	let videoRef = $state<HTMLVideoElement | null>(null);
 
+	// Get loading context to report video loading status
+	const loadingContext = getContext<{
+		registerAsset: (id: string) => void;
+		updateAsset: (
+			id: string,
+			status: 'pending' | 'loading' | 'loaded' | 'error',
+			progress?: number
+		) => void;
+	}>('loading');
+
+	// Handle video loading events
+	function handleVideoLoadStart() {
+		console.log('🎥 Video loadstart event');
+		if (loadingContext) {
+			loadingContext.updateAsset('hero-video', 'loading');
+		}
+	}
+
+	function handleVideoLoaded() {
+		console.log('🎥 Video loadeddata event');
+		if (loadingContext) {
+			loadingContext.updateAsset('hero-video', 'loaded');
+		}
+		console.log('Video loaded successfully');
+	}
+
+	function handleVideoError() {
+		console.log('🎥 Video error event');
+		if (loadingContext) {
+			loadingContext.updateAsset('hero-video', 'error');
+		}
+		console.log('Video failed to load, using fallback');
+	}
+
 	onMount(() => {
 		mounted = true;
-		// Ensure video plays
-		if (videoRef) {
-			videoRef.play().catch(console.warn);
+
+		// Register video asset
+		if (loadingContext) {
+			loadingContext.registerAsset('hero-video');
 		}
+
+		// Check if video is already loaded
+		setTimeout(() => {
+			if (videoRef) {
+				if (videoRef.readyState >= 3) { // HAVE_FUTURE_DATA or higher
+					console.log('🎥 Video already loaded');
+					if (loadingContext) {
+						loadingContext.updateAsset('hero-video', 'loaded');
+					}
+				}
+				videoRef.play().catch(console.warn);
+			}
+		}, 100);
 	});
 </script>
 
@@ -35,8 +83,10 @@
 			muted
 			loop
 			playsinline
-			onloadeddata={() => console.log('Video loaded successfully')}
-			onerror={() => console.log('Video failed to load, using fallback')}
+			onloadstart={handleVideoLoadStart}
+			onloadeddata={handleVideoLoaded}
+			oncanplaythrough={handleVideoLoaded}
+			onerror={handleVideoError}
 		>
 			<source src="/hero_video.mp4" type="video/mp4" />
 		</video>

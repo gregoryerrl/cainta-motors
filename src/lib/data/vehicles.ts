@@ -95,9 +95,7 @@ export const vehicles: Vehicle[] = [
 		year: 2024,
 		category: 'sedan',
 		image: 'https://via.placeholder.com/800x600/1a1a1a/ef4444?text=Toyota+Vios+GR-S',
-		images: [
-			'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Toyota+Vios+GR-S'
-		],
+		images: ['https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Toyota+Vios+GR-S'],
 		features: [
 			'Toyota Safety Sense',
 			'LED Headlights',
@@ -136,9 +134,7 @@ export const vehicles: Vehicle[] = [
 		year: 2024,
 		category: 'sedan',
 		image: 'https://via.placeholder.com/800x600/1a1a1a/ef4444?text=Mazda+3+Premium',
-		images: [
-			'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Mazda+3+Premium'
-		],
+		images: ['https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Mazda+3+Premium'],
 		features: [
 			'i-Activsense Safety Features',
 			'Bose Premium Audio',
