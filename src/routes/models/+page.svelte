@@ -30,26 +30,26 @@
 <section class="min-h-screen bg-black py-12">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="text-center">
-			<h1 class="text-5xl font-bold text-white md:text-6xl">
+			<h1 class="text-5xl font-thin text-white md:text-6xl">
 				Our Models
 			</h1>
-			<p class="mt-4 text-xl text-gray-400">
+			<p class="mt-4 text-lg font-thin text-gray-500">
 				Explore our complete lineup of premium vehicles
 			</p>
 		</div>
 
-		<div class="mt-12 flex flex-wrap items-center justify-center gap-2">
-			<span class="flex items-center gap-2 text-gray-400">
-				<Filter class="h-5 w-5" />
+		<div class="mt-12 flex flex-wrap items-center justify-center gap-4">
+			<span class="flex items-center gap-2 text-xs font-light tracking-wider text-gray-500 uppercase">
+				<Filter class="h-4 w-4" />
 				Filter by:
 			</span>
 			{#each categories as category}
 				<button
 					onclick={() => selectedCategory = category.value}
-					class="rounded-full px-6 py-2 text-sm font-medium transition-all {
+					class="border px-6 py-2 text-xs font-light tracking-widest uppercase transition-all {
 						selectedCategory === category.value
-							? 'bg-red-600 text-white'
-							: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+							? 'border-red-900 bg-red-900/20 text-white'
+							: 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white'
 					}"
 				>
 					{category.label}
@@ -65,10 +65,10 @@
 			</div>
 		{:else}
 			<div class="mt-24 text-center">
-				<p class="text-2xl text-gray-500">No vehicles found in this category</p>
+				<p class="text-2xl font-thin text-gray-500">No vehicles found in this category</p>
 				<button
 					onclick={() => selectedCategory = 'all'}
-					class="mt-4 rounded-full bg-red-600 px-6 py-2 text-white hover:bg-red-700"
+					class="mt-4 border border-red-900 px-6 py-2 text-xs font-light tracking-widest uppercase text-white transition-all hover:bg-red-900/20"
 				>
 					View All Models
 				</button>
