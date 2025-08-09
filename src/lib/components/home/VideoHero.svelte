@@ -1,7 +1,17 @@
 <script lang="ts">
 	import { ChevronDown } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
+
+	// We'll get Lenis instance from context or fallback to our utility
+	function handleScrollToNext() {
+		// Try to find the next section element
+		const showcaseSection = document.getElementById('showcase');
+		if (showcaseSection) {
+			// Use native smooth scroll as fallback, Lenis will override this
+			showcaseSection.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
 
 	let mounted = $state(false);
 	let videoRef = $state<HTMLVideoElement | null>(null);
@@ -84,9 +94,15 @@
 	</div>
 
 	<!-- Scroll Indicator -->
-	<div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-		<ChevronDown class="h-8 w-8 text-white/70" />
-	</div>
+	<button
+		type="button"
+		class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce scroll-indicator cursor-pointer p-2 rounded-full focus:outline-none"
+		onclick={handleScrollToNext}
+		aria-label="Scroll to next section"
+		title="Scroll to next section"
+	>
+		<ChevronDown class="h-8 w-8 text-white/70 transition-colors duration-300 hover:text-white" />
+	</button>
 </section>
 
 <style>

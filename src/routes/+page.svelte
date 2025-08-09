@@ -9,10 +9,12 @@
 </script>
 
 <!-- Video Hero Section -->
-<VideoHero />
+<section id="hero">
+	<VideoHero />
+</section>
 
 <!-- Split Section: 3D Model + Engineering Excellence -->
-<section class="relative bg-black" style="height: 100vh;">
+<section id="showcase" class="relative bg-black" style="height: 100vh;">
 	<div class="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
 		<!-- Left: 3D Model (Full height) -->
 		<div class="relative h-full bg-white/6">
@@ -32,7 +34,7 @@
 </section>
 
 <!-- Browse Models Section -->
-<section class="bg-black py-24">
+<section id="models" class="bg-black py-24">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="flex items-center justify-between">
 			<div>
@@ -68,9 +70,11 @@
 	</div>
 </section>
 
-<Gallery />
+<section id="gallery">
+	<Gallery />
+</section>
 
-<section class="bg-black py-24">
+<section id="cta" class="bg-black py-24">
 	<div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
 		<h2 class="text-4xl font-thin text-white md:text-5xl">Ready to Experience Excellence?</h2>
 		<p class="mt-4 text-lg font-thin text-gray-500">
