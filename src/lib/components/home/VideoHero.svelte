@@ -25,7 +25,7 @@
 	});
 </script>
 
-<section class="relative h-screen w-full overflow-hidden bg-black">
+<section class="relative w-full overflow-hidden bg-black" style="height: calc(100vh - 5rem);">
 	<!-- Video Background with Fallback -->
 	{#if typeof window !== 'undefined'}
 		<video
