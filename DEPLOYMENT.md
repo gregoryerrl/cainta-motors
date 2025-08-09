@@ -39,12 +39,12 @@ Set these in Cloudflare Pages under **Settings** > **Environment variables**:
 
 ## Performance Features Configured
 
-### 🎯 HTTP Headers (`static/_headers`)
+### 🎯 HTTP Headers (`_headers`)
 - Security headers (X-Content-Type-Options, X-Frame-Options)
 - Aggressive caching for static assets (1 year)
 - Optimized caching for 3D models and videos
 
-### 🔄 Redirects (`static/_redirects`)
+### 🔄 Redirects (`_redirects`)
 - SPA fallback for client-side routing
 
 ### ⚡ Build Optimization
@@ -72,6 +72,10 @@ Current build output:
 ### Build Fails with wrangler.toml error
 - **Solution**: Remove any `wrangler.toml` file from your project root
 - Use Git integration instead of CLI deployment for Pages
+
+### _headers or _redirects file location error
+- **Solution**: Move `_headers` and `_redirects` files to project root (not `/static/`)
+- Cloudflare Pages expects these files in the root directory
 
 ### Build Fails with Node.js version
 - Set `NODE_VERSION` environment variable to `18` in Pages settings
