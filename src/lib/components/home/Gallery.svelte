@@ -73,14 +73,14 @@
 
 					<button
 						onclick={prevImage}
-						class="absolute top-1/2 left-4 -translate-y-1/2 cursor-pointer p-3 font-light backdrop-blur-sm transition-all hover:scale-120 hover:font-black"
+						class="absolute top-1/2 left-4 -translate-y-1/2 scale-90 cursor-pointer p-3 font-light transition-all hover:scale-120 hover:font-black"
 					>
 						<ChevronLeft class="h-6 w-6 text-white" />
 					</button>
 
 					<button
 						onclick={nextImage}
-						class="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer p-3 font-light backdrop-blur-sm transition-all hover:scale-120 hover:font-black"
+						class="absolute top-1/2 right-4 -translate-y-1/2 scale-90 cursor-pointer p-3 font-light transition-all hover:scale-120 hover:font-black"
 					>
 						<ChevronRight class="h-6 w-6 text-white" />
 					</button>
