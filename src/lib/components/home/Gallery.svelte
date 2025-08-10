@@ -5,32 +5,32 @@
 
 	const images = [
 		{
-			src: 'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Front',
+			src: '/honda/honda_front.jpg',
 			alt: 'Honda City RS Front View',
 			title: 'Bold Front Design'
 		},
 		{
-			src: 'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Side',
+			src: '/honda/honda4.jpg',
 			alt: 'Honda City RS Side Profile',
 			title: 'Sleek Profile'
 		},
 		{
-			src: 'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Rear',
+			src: '/honda/honda2.jpg',
 			alt: 'Honda City RS Rear View',
 			title: 'Dynamic Rear'
 		},
 		{
-			src: 'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Interior',
+			src: '/honda/honda1.jpg',
 			alt: 'Honda City RS Interior',
 			title: 'Premium Interior'
 		},
 		{
-			src: 'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Dashboard',
+			src: '/honda/honda6.jpg',
 			alt: 'Honda City RS Dashboard',
 			title: 'Advanced Dashboard'
 		},
 		{
-			src: 'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Seats',
+			src: '/honda/honda5.jpg',
 			alt: 'Honda City RS Seats',
 			title: 'Comfort Redefined'
 		}

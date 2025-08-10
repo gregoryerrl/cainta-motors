@@ -89,7 +89,7 @@
 				</div>
 				<div class="aspect-video overflow-hidden border border-gray-800 bg-white/6">
 					<img
-						src="https://via.placeholder.com/800x600/1a1a1a/ef4444?text=Cainta+Motors+Showroom"
+						src="/showroom.jpg"
 						alt="Cainta Motors Showroom"
 						class="h-full w-full object-cover"
 					/>

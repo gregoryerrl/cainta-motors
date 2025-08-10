@@ -43,12 +43,13 @@ export const vehicles: Vehicle[] = [
 		price: 1115000,
 		year: 2024,
 		category: 'sedan',
-		image: 'https://via.placeholder.com/800x600/1a1a1a/ef4444?text=Honda+City+RS',
+		image: '/honda/honda_front.jpg',
 		images: [
-			'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Front',
-			'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Side',
-			'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Rear',
-			'https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Honda+City+RS+Interior'
+			'/honda/honda1.jpg',
+			'/honda/honda2.jpg',
+			'/honda/honda3.jpg',
+			'/honda/honda4.jpg',
+			'/honda/honda5.jpg'
 		],
 		modelPath: '/src/lib/models/honda_city_rs.glb',
 		features: [
@@ -94,8 +95,8 @@ export const vehicles: Vehicle[] = [
 		price: 1075000,
 		year: 2024,
 		category: 'sedan',
-		image: 'https://via.placeholder.com/800x600/1a1a1a/ef4444?text=Toyota+Vios+GR-S',
-		images: ['https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Toyota+Vios+GR-S'],
+		image: '/vios/vios1.jpg',
+		images: ['/vios/vios2.jpg'],
 		features: [
 			'Toyota Safety Sense',
 			'LED Headlights',
@@ -133,8 +134,8 @@ export const vehicles: Vehicle[] = [
 		price: 1498000,
 		year: 2024,
 		category: 'sedan',
-		image: 'https://via.placeholder.com/800x600/1a1a1a/ef4444?text=Mazda+3+Premium',
-		images: ['https://via.placeholder.com/1920x1080/1a1a1a/ef4444?text=Mazda+3+Premium'],
+		image: '/mazda/mazda1.jpg',
+		images: ['/mazda/mazda2.jpg'],
 		features: [
 			'i-Activsense Safety Features',
 			'Bose Premium Audio',
