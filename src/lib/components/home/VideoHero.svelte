@@ -61,7 +61,8 @@
 		// Check if video is already loaded
 		setTimeout(() => {
 			if (videoRef) {
-				if (videoRef.readyState >= 3) { // HAVE_FUTURE_DATA or higher
+				if (videoRef.readyState >= 3) {
+					// HAVE_FUTURE_DATA or higher
 					console.log('🎥 Video already loaded');
 					if (loadingContext) {
 						loadingContext.updateAsset('hero-video', 'loaded');
@@ -113,13 +114,6 @@
 						Premium Automotive Excellence
 					</span>
 				</h1>
-			</div>
-
-			<div transition:fly={{ y: 30, delay: 800, duration: 1000 }}>
-				<p class="mx-auto mb-10 max-w-3xl text-lg font-thin text-gray-400 md:text-xl">
-					Experience the perfect fusion of luxury, performance, and innovation.<br />
-					Discover vehicles that redefine automotive excellence.
-				</p>
 			</div>
 
 			<div

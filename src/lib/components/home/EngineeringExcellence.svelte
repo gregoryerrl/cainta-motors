@@ -45,11 +45,11 @@
 					<div class="flex h-8 w-8 items-center justify-center border border-red-900/50">
 						<svelte:component this={item.icon} class="h-4 w-4 text-red-900" />
 					</div>
-					<h3 class="mt-4 text-sm font-light tracking-wider text-gray-400">
+					<h3 class="mt-4 text-sm font-normal tracking-wider text-gray-400">
 						{item.title.toUpperCase()}
 					</h3>
 					<p class="text-2xl font-thin text-white">{item.metric}</p>
-					<p class="text-xs font-thin tracking-wider text-gray-600">{item.detail}</p>
+					<p class="text-xs font-medium tracking-wider text-gray-600">{item.detail}</p>
 				</div>
 			</div>
 		{/each}
