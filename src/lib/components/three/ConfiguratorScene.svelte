@@ -23,6 +23,8 @@
 	} = $props();
 
 	let containerElement: HTMLDivElement;
+	let lastTouchDistance = 0;
+	let initialTouchDistance = 0;
 
 	// Prevent wheel events from propagating to page scroll
 	function handleWheel(event: WheelEvent) {
@@ -30,13 +32,72 @@
 		event.stopPropagation();
 	}
 
+	// Calculate distance between two touch points
+	function getTouchDistance(touches: TouchList): number {
+		if (touches.length < 2) return 0;
+		const touch1 = touches[0];
+		const touch2 = touches[1];
+		return Math.sqrt(
+			Math.pow(touch2.clientX - touch1.clientX, 2) + 
+			Math.pow(touch2.clientY - touch1.clientY, 2)
+		);
+	}
+
+	// Handle touch start for pinch gestures
+	function handleTouchStart(event: TouchEvent) {
+		if (event.touches.length === 2) {
+			event.preventDefault();
+			initialTouchDistance = getTouchDistance(event.touches);
+			lastTouchDistance = initialTouchDistance;
+		}
+	}
+
+	// Handle touch move for pinch zoom
+	function handleTouchMove(event: TouchEvent) {
+		if (event.touches.length === 2) {
+			event.preventDefault();
+			event.stopPropagation();
+			
+			const currentDistance = getTouchDistance(event.touches);
+			if (initialTouchDistance > 0) {
+				const scale = currentDistance / lastTouchDistance;
+				
+				// Create a synthetic wheel event for OrbitControls
+				const syntheticEvent = new WheelEvent('wheel', {
+					deltaY: scale > 1 ? -100 : 100, // Negative for zoom in, positive for zoom out
+					bubbles: true,
+					cancelable: true
+				});
+				
+				containerElement?.dispatchEvent(syntheticEvent);
+				lastTouchDistance = currentDistance;
+			}
+		}
+	}
+
+	// Handle touch end
+	function handleTouchEnd(event: TouchEvent) {
+		if (event.touches.length < 2) {
+			initialTouchDistance = 0;
+			lastTouchDistance = 0;
+		}
+	}
+
 	onMount(() => {
 		if (containerElement) {
-			// Prevent wheel events directly on the container
+			// Desktop wheel events
 			containerElement.addEventListener('wheel', handleWheel, { passive: false });
+			
+			// Mobile touch events for pinch zoom
+			containerElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+			containerElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+			containerElement.addEventListener('touchend', handleTouchEnd, { passive: false });
 			
 			return () => {
 				containerElement.removeEventListener('wheel', handleWheel);
+				containerElement.removeEventListener('touchstart', handleTouchStart);
+				containerElement.removeEventListener('touchmove', handleTouchMove);
+				containerElement.removeEventListener('touchend', handleTouchEnd);
 			};
 		}
 	});
