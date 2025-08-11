@@ -183,13 +183,8 @@ export const vehicles: Vehicle[] = [
 		price: 12500000,
 		year: 2022,
 		category: 'luxury',
-		image: 'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Mercedes-Benz+Maybach',
-		images: [
-			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Front',
-			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Side',
-			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Rear',
-			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Interior'
-		],
+		image: '/maybach/maybach1.jpg',
+		images: ['/maybach/maybach1.jpg', '/maybach/maybach2.jpg'],
 		modelPath: '/mercedes-benz_maybach_2022.glb',
 		modelScale: 1,
 		modelPosition: [4, 2, 4] as [number, number, number],
