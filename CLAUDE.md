@@ -31,7 +31,7 @@ npm run format      # Prettier write
 
 ### Framework Stack
 
-- **SvelteKit** with Svelte 5 (using runes syntax - `$props()`, `$state()`)
+- **SvelteKit** with Svelte 5 (using runes syntax - `$props()`, `$state()`, `$effect()`)
 - **TailwindCSS v4** integrated via Vite plugin (NOT PostCSS)
 - **TypeScript** with strict mode enabled
 - **Vercel adapter** for deployment
@@ -53,34 +53,65 @@ npm run format      # Prettier write
 ### Typography
 
 - **Primary Fonts**: `font-thin` and `font-light` only (never bold/semibold)
-- **Color Palette**: Muted tones - `gray-500`, `gray-600`, `red-900`
+- **Color Palette**: Muted tones - `gray-500`, `gray-600`, `gray-700`, `gray-800`, `red-900`
 - **Text Hierarchy**: Consistent sizing with thin weights for premium feel
+- **Letter Spacing**: Use `tracking-wider` and `tracking-widest` for luxury aesthetic
+- **Text Transform**: `uppercase` for labels and buttons
 
 ### UI Components
 
 - **Buttons**: Box outlines with `tracking-widest` and `uppercase` styling
 - **Forms**: Sharp borders, no rounded corners, minimal focus states
-- **Cards**: `border-gray-800` with subtle `bg-black` backgrounds and group hover effects
+- **Cards**: `border-gray-800` with subtle `bg-white/6` backgrounds and group hover effects
 - **Icons**: Scaled to `h-3 w-3` for inline elements, `h-4 w-4` for buttons
 - **Images**: Grayscale filter with hover transitions to color
-- **Typography**: PHP currency formatting for vehicle pricing
+- **Typography**: Currency formatting for vehicle pricing
+- **Hover Effects**: Subtle transitions with `hover:bg-red-900/20` or `hover:bg-white/5`
+
+### Layout Patterns
+
+- **Spacing**: Generous padding (`py-20`, `mt-24`) for luxury feel
+- **Borders**: Consistent use of `border-gray-800` for structure
+- **Backgrounds**: `bg-black` with `bg-white/6` for cards
+- **Grid Gaps**: Use `gap-px` with `bg-gray-800` for grid separators
 
 ## 3D Implementation (Threlte + Three.js)
 
-### Current Models
+### Available 3D Models
 
-- **Mercedes-Benz Maybach 2022**: `/static/Mercedes_Benz_Maybach_2022.glb` (scale: 0.5)
-- **Honda City RS**: `/static/Honda_City_RS.glb` (available for use)
+- **Mercedes-Benz Maybach 2022**: `/mercedes-benz_maybach_2022.glb`
+- **Honda City RS**: `/honda_city_rs.glb`
+- **Mazda 3**: `/mazda-3.glb`
 
-### Camera & Controls Configuration
+### Model Configuration
+
+Each vehicle in `/src/lib/data/vehicles.ts` includes:
+- `modelPath`: Path to GLB file
+- `modelScale`: Scale factor for proper sizing
+- `modelPosition`: Camera position [x, y, z]
+- `modelTarget`: OrbitControls target point [x, y, z]
+
+### Scene Component Props
 
 ```typescript
-// Camera
-position={[4, 1, 4]} fov={45} near={0.1} far={100}
+<Scene 
+  model={vehicle.modelPath}
+  scale={vehicle.modelScale}
+  objectPosition={vehicle.modelPosition}
+  target={vehicle.modelTarget}
+/>
+```
 
-// Controls
-enablePan={false} enableZoom={false} enableDamping={true}
-autoRotate={true} autoRotateSpeed={1.0}
+### Controls Configuration
+
+```typescript
+// OrbitControls settings
+enablePan={false} 
+enableZoom={false} 
+enableDamping={true}
+autoRotate={true} 
+autoRotateSpeed={1.0}
+target={[x, y, z]} // Dynamic based on model
 ```
 
 ### Lighting Setup
@@ -98,12 +129,31 @@ autoRotate={true} autoRotateSpeed={1.0}
 - **VideoHero** (`/src/lib/components/home/`): Hero section with video background
 - **VehicleCard** (`/src/lib/components/ui/`): Vehicle display cards with pricing
 - **SmoothScrollManager** (`/src/lib/components/`): Lenis smooth scrolling integration
+- **EngineeringExcellence** (`/src/lib/components/home/`): 100vh split section with 3D model
 
 ### Data Management
 
 - **Vehicle Data** (`/src/lib/data/vehicles.ts`): Structured vehicle information with TypeScript interfaces
 - **Static Assets**: 3D models (.glb files) in `/static/` directory
 - **Video Assets**: Hero videos (.mp4) in `/static/` directory
+- **Image Assets**: Vehicle images in `/static/[brand]/` directories
+
+## Page Structure
+
+### Key Pages
+
+- **Homepage** (`/`): Video hero, 3D model showcase, feature sections
+- **Models** (`/models`): Grid of available vehicles with filters
+- **Model Detail** (`/models/[slug]`): Individual vehicle with 3D viewer, gallery, specs
+- **Configurator** (`/configurator`): Model selection with 3D preview
+- **About** (`/about`): Company information with premium layout
+- **Contact** (`/contact`): Contact form and dealership information
+
+### Loading States
+
+- 3D models use timeout-based loading (2 seconds)
+- Loading spinners with `animate-spin` and backdrop blur
+- Minimum loading time for smooth transitions
 
 ## Svelte 5 Syntax
 
@@ -117,15 +167,72 @@ autoRotate={true} autoRotateSpeed={1.0}
 <script lang="ts">
   let count = $state(0);
 </script>
+
+<!-- Effects -->
+<script lang="ts">
+  $effect(() => {
+    // Runs when dependencies change
+  });
+</script>
 ```
+
+## Vehicle Data Structure
+
+```typescript
+interface Vehicle {
+  id: string;
+  slug: string;
+  brand: string;
+  model: string;
+  variant: string;
+  price: number;
+  year: number;
+  category: 'sedan' | 'suv' | 'hatchback' | 'sports' | 'luxury';
+  image: string;
+  images: string[];
+  modelPath?: string;
+  modelScale?: number;
+  modelPosition?: [number, number, number];
+  modelTarget?: [number, number, number];
+  features: string[];
+  specifications: {
+    engine: string;
+    power: string;
+    torque: string;
+    transmission: string;
+    drivetrain: string;
+    fuelType: string;
+    fuelCapacity: string;
+    seatingCapacity: number;
+    dimensions: {
+      length: string;
+      width: string;
+      height: string;
+      wheelbase: string;
+    };
+  };
+  colors: {
+    name: string;
+    hex: string;
+  }[];
+}
+```
+
+## Current Vehicle Inventory
+
+1. **Honda City RS** - Sedan with 3D model
+2. **Toyota Vios GR-S** - Sedan (no 3D model)
+3. **Mazda 3 Premium** - Sedan with 3D model
+4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model
 
 ## Performance Considerations
 
-- 3D models optimized for web (scale 0.5 for Maybach)
+- 3D models optimized with proper scale factors
 - Auto-rotation pauses on user interaction (3 second resume delay)
 - Video autoplay with fallback gradient background
 - Lenis smooth scrolling with `{ autoRaf: true }` configuration
 - Long-term caching for static assets via Vercel headers
+- Loading states prevent layout shift
 
 ## Deployment
 

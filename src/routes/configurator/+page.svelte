@@ -1,65 +1,71 @@
 <script lang="ts">
-	import Scene from '$lib/components/three/Scene.svelte';
+	import ConfiguratorScene from '$lib/components/three/ConfiguratorScene.svelte';
 	import { Download, Share2 } from 'lucide-svelte';
 
-	interface CarModel {
-		id: string;
-		modelName: string;
-		modelUrl: string;
-		scale: number;
-		position: [number, number, number];
-		target: [number, number, number];
-		price: number;
-	}
-
-	const carModels: CarModel[] = [
-		{
-			id: 'mercedes-maybach',
-			modelName: 'Mercedes-Benz Maybach 2022',
-			modelUrl: '/mercedes-benz_maybach_2022.glb',
-			scale: 1,
-			position: [4, 2, 4],
-			target: [0, 0, 0],
-			price: 12500000
-		},
-		{
-			id: 'honda-city-rs',
-			modelName: 'Honda City RS',
-			modelUrl: '/honda_city_rs.glb',
-			scale: 3.8,
-			position: [4, 1, 4],
-			target: [0, 0, 2.5],
-			price: 1115000
-		}
+	// Color options similar to the example
+	const colors = [
+		{ name: 'Red', hex: '#FF0000' },
+		{ name: 'Green', hex: '#1a5e1a' },
+		{ name: 'Blue', hex: '#0000FF' },
+		{ name: 'Purple', hex: '#A020F0' },
+		{ name: 'Orange', hex: '#ffa500' },
+		{ name: 'Grey', hex: '#59555b' },
+		{ name: 'Black', hex: '#222222' },
+		{ name: 'White', hex: '#ececec' }
 	];
 
-	let selectedModel = $state(carModels[0]);
-	let isLoading = $state(true); // Start with loading true for initial load
+	// Car options
+	const carOptions = [
+		{ id: 'car1', name: 'Sports Car', model: '/car1/car1.gltf', price: 100000 },
+		{ id: 'car2', name: 'Luxury Sedan', model: '/car2/car2.gltf', price: 150000 }
+	];
+
+	// State management
+	let selectedCar = $state('car1');
+	let selectedColor = $state(colors[2]); // Default to blue
+	let accessory = $state(0);
+	let showDetails = $state(false);
+	let isLoading = $state(true);
 	let loadingKey = $state(0);
+
+	// Calculate total cost
+	const totalCost = $derived(() => {
+		let cost = selectedCar === 'car1' ? 100000 : 150000;
+		if (accessory === 1) cost += 10000;
+		return cost;
+	});
 
 	// Initialize first load
 	$effect(() => {
-		// Only run once on mount
 		if (loadingKey === 0) {
 			setTimeout(() => {
 				isLoading = false;
-			}, 2000); // Give time for initial model to load
+			}, 2000);
 		}
 	});
 
-	// Track loading state when model changes
-	function selectModel(model: CarModel) {
-		if (selectedModel.id === model.id) return; // Don't reload if same model
-
-		selectedModel = model;
+	// Handle car selection
+	function selectCarModel(carId: string) {
+		if (selectedCar === carId) return;
+		
+		selectedCar = carId;
 		isLoading = true;
-		loadingKey++; // Force re-render of Scene component
+		loadingKey++;
 
-		// Use a timeout as fallback since GLTF events might not work properly
 		setTimeout(() => {
 			isLoading = false;
-		}, 2000); // 2 seconds should be enough for model loading
+		}, 2000);
 	}
+
+	// Get current car info
+	const currentCarInfo = $derived(() => {
+		const currentCar = carOptions.find(car => car.id === selectedCar);
+		return {
+			name: currentCar?.name || 'Sports Car',
+			model: currentCar?.model || '/car1/car1.gltf',
+			price: currentCar?.price || 100000
+		};
+	});
 
 	const formatPrice = (price: number) => {
 		return new Intl.NumberFormat('en-PH', {
@@ -77,116 +83,152 @@
 <section class="min-h-screen bg-black py-8">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<h1 class="text-center text-4xl font-thin text-white md:text-5xl">Configure Your Dream Car</h1>
-		<p class="mt-4 text-center text-lg font-thin text-gray-500">Select your preferred model</p>
+		<p class="mt-4 text-center text-lg font-thin text-gray-500">Customize your perfect vehicle</p>
 
 		<div class="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
+			<!-- 3D Scene -->
 			<div class="lg:col-span-2">
 				<div class="relative aspect-video overflow-hidden rounded-lg bg-white/6">
 					{#key loadingKey}
-						<Scene
+						<ConfiguratorScene
 							class="h-full w-full"
-							scale={selectedModel.scale}
-							objectPosition={selectedModel.position}
-							model={selectedModel.modelUrl}
-							target={selectedModel.target}
+							scale={1}
+							objectPosition={[4, 2, 4]}
+							model={currentCarInfo().model}
+							target={[0, 0, 0]}
+							selectedColor={selectedColor.hex}
+							{accessory}
 						/>
 					{/key}
 
 					{#if isLoading}
-						<div
-							class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-						>
+						<div class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
 							<div class="flex flex-col items-center gap-4">
-								<div
-									class="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-white"
-								></div>
-								<p class="text-sm font-thin text-gray-300">Loading {selectedModel.modelName}...</p>
+								<div class="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-white"></div>
+								<p class="text-sm font-thin text-gray-300">Loading {currentCarInfo().name}...</p>
 							</div>
 						</div>
 					{/if}
 				</div>
+			</div>
 
-				<div class="mt-8 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-6 text-xl font-thin text-white">Select Model</h2>
-					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-						{#each carModels as model}
+			<!-- Configurator Sections -->
+			<div class="lg:col-span-1">
+				<div class="space-y-6">
+					
+					<!-- Car Options Section -->
+					<div class="border border-gray-800 bg-white/6 p-6">
+						<h3 class="mb-4 text-lg font-light uppercase tracking-widest text-white">Car Options</h3>
+						<div class="space-y-3">
+							{#each carOptions as car}
+								<button
+									onclick={() => selectCarModel(car.id)}
+									class="w-full border p-4 text-left transition-all {selectedCar === car.id
+										? 'border-red-900 bg-red-900/20'
+										: 'border-gray-700 hover:border-gray-600'}"
+								>
+									<div class="text-sm font-light text-white uppercase tracking-wider">
+										{car.name} - {formatPrice(car.price)}
+									</div>
+								</button>
+							{/each}
+							
 							<button
-								onclick={() => selectModel(model)}
-								class="border p-6 text-left transition-all {selectedModel.id === model.id
+								onclick={() => showDetails = !showDetails}
+								class="mt-4 w-full border border-gray-700 px-4 py-2 text-xs font-light tracking-widest text-white uppercase transition-all hover:border-gray-600"
+							>
+								{showDetails ? 'Hide Car Specifications' : 'Show Car Specifications'}
+							</button>
+						</div>
+					</div>
+
+					<!-- Car Color Section -->
+					<div class="border border-gray-800 bg-white/6 p-6">
+						<h3 class="mb-4 text-lg font-light uppercase tracking-widest text-white">Car Color</h3>
+						<div class="grid grid-cols-2 gap-3">
+							{#each colors as color}
+								<button
+									onclick={() => selectedColor = color}
+									class="flex items-center gap-3 border p-3 text-left transition-all {selectedColor.name === color.name
+										? 'border-red-900 bg-red-900/20'
+										: 'border-gray-700 hover:border-gray-600'}"
+								>
+									<div
+										class="h-4 w-4 border border-gray-600"
+										style="background-color: {color.hex}"
+									></div>
+									<div class="text-xs font-light text-white uppercase tracking-wider">
+										{color.name}
+									</div>
+								</button>
+							{/each}
+						</div>
+					</div>
+
+					<!-- Accessories Section -->
+					<div class="border border-gray-800 bg-white/6 p-6">
+						<h3 class="mb-4 text-lg font-light uppercase tracking-widest text-white">Accessories</h3>
+						<div class="space-y-3">
+							<button
+								onclick={() => accessory = 1}
+								class="w-full border p-4 text-left transition-all {accessory === 1
 									? 'border-red-900 bg-red-900/20'
 									: 'border-gray-700 hover:border-gray-600'}"
 							>
-								<p class="text-lg font-light text-white">
-									{model.modelName}
-								</p>
-								<p class="mt-2 text-sm font-thin text-gray-500">
-									Starting from {formatPrice(model.price)}
-								</p>
+								<div class="text-sm font-light text-white uppercase tracking-wider">
+									Performance Package - {formatPrice(10000)}
+								</div>
 							</button>
-						{/each}
+							<button
+								onclick={() => accessory = 0}
+								class="w-full border p-4 text-left transition-all {accessory === 0
+									? 'border-red-900 bg-red-900/20'
+									: 'border-gray-700 hover:border-gray-600'}"
+							>
+								<div class="text-sm font-light text-white uppercase tracking-wider">
+									Standard Package
+								</div>
+							</button>
+						</div>
 					</div>
-				</div>
 
-				<div class="mt-6 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-4 text-xl font-thin text-white">Model Information</h2>
-					<div class="space-y-3">
-						<p class="font-thin text-gray-400">
-							Experience the {selectedModel.modelName} in our interactive 3D viewer. Rotate the model
-							by dragging to view from different angles.
-						</p>
-						<p class="font-thin text-gray-400">
-							Contact our dealership for more customization options including colors, wheels,
-							interior packages, and additional features.
-						</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="lg:col-span-1">
-				<div class="sticky top-24 space-y-6">
+					<!-- Total Cost Section -->
 					<div class="border border-gray-800 bg-white/6 p-6">
-						<h2 class="mb-4 text-xl font-thin text-white">Selected Configuration</h2>
-
-						<div class="space-y-4 border-b border-gray-800 pb-4">
-							<div>
-								<span class="block font-thin text-gray-500">Model</span>
-								<span class="text-lg font-light text-white">
-									{selectedModel.modelName}
-								</span>
+						<h3 class="mb-4 text-lg font-light uppercase tracking-widest text-white">Total Cost</h3>
+						<div class="border border-gray-700 p-4">
+							<div class="text-2xl font-thin text-red-900">
+								{formatPrice(totalCost())}
 							</div>
+							<p class="mt-2 text-xs font-thin text-gray-600">
+								*Final price may vary based on additional options
+							</p>
 						</div>
-
-						<div class="mt-4">
-							<div class="flex flex-col space-y-2">
-								<span class="font-thin text-gray-500">Base Price</span>
-								<span class="text-2xl font-thin text-red-900">
-									{formatPrice(selectedModel.price)}
-								</span>
-							</div>
-						</div>
-
-						<p class="mt-4 text-xs font-thin text-gray-600">
-							*Final price may vary based on additional customizations and features
-						</p>
 					</div>
 
+					<!-- Car Details Section -->
+					{#if showDetails}
+						<div class="border border-gray-800 bg-white/6 p-6">
+							<h3 class="mb-4 text-lg font-light uppercase tracking-widest text-white">Specifications</h3>
+							<div class="space-y-3 text-sm font-thin text-gray-400">
+								<p>Model: {currentCarInfo().name}</p>
+								<p>Color: {selectedColor.name}</p>
+								<p>Package: {accessory === 1 ? 'Performance' : 'Standard'}</p>
+								<p>Interactive 3D viewer with drag-to-rotate controls</p>
+							</div>
+						</div>
+					{/if}
+
+					<!-- Action Buttons -->
 					<div class="space-y-3">
-						<button
-							class="flex w-full items-center justify-center gap-2 border border-red-900 px-6 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-red-900/20"
-						>
+						<button class="flex w-full items-center justify-center gap-2 border border-red-900 px-6 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-red-900/20">
 							<Download class="h-4 w-4" />
 							Save Configuration
 						</button>
-						<button
-							class="flex w-full items-center justify-center gap-2 border border-white px-6 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-white hover:text-black"
-						>
+						<button class="flex w-full items-center justify-center gap-2 border border-white px-6 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-white hover:text-black">
 							<Share2 class="h-4 w-4" />
 							Share
 						</button>
-						<a
-							href="/contact"
-							class="block w-full border border-gray-700 bg-white/6 px-6 py-3 text-center text-xs font-light tracking-widest text-white uppercase transition-all hover:border-gray-600 hover:bg-gray-700"
-						>
+						<a href="/contact" class="block w-full border border-gray-700 bg-white/6 px-6 py-3 text-center text-xs font-light tracking-widest text-white uppercase transition-all hover:border-gray-600 hover:bg-gray-700">
 							Contact Dealer
 						</a>
 					</div>
