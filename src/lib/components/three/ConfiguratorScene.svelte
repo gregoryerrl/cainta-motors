@@ -2,6 +2,7 @@
 	import { Canvas } from '@threlte/core';
 	import { interactivity } from '@threlte/extras';
 	import ConfiguratorModelViewer from './ConfiguratorModelViewer.svelte';
+	import { onMount } from 'svelte';
 
 	let {
 		class: className = '',
@@ -20,9 +21,33 @@
 		selectedColor?: string;
 		accessory?: number;
 	} = $props();
+
+	let containerElement: HTMLDivElement;
+
+	// Prevent wheel events from propagating to page scroll
+	function handleWheel(event: WheelEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+	}
+
+	onMount(() => {
+		if (containerElement) {
+			// Prevent wheel events directly on the container
+			containerElement.addEventListener('wheel', handleWheel, { passive: false });
+			
+			return () => {
+				containerElement.removeEventListener('wheel', handleWheel);
+			};
+		}
+	});
 </script>
 
-<div class="{className} relative" style="touch-action: none;">
+<div 
+	bind:this={containerElement}
+	class="{className} relative" 
+	style="touch-action: none;"
+	role="application"
+>
 	<Canvas>
 		{@const _ = interactivity()}
 		<ConfiguratorModelViewer {scale} {objectPosition} {model} {target} {selectedColor} {accessory} />

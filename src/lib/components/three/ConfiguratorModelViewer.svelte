@@ -12,7 +12,7 @@
 		accessory = 0
 	}: { scale?: number; objectPosition?: any; model?: string; target?: any; selectedColor?: string; accessory?: number } = $props();
 	
-	let autoRotate = $state(true);
+	let autoRotate = $state(false); // Disabled for configurator - user controls
 	
 	// Determine which car to show based on model path
 	const selectedCar = $derived(() => {
@@ -25,23 +25,17 @@
 <T.PerspectiveCamera makeDefault position={objectPosition} fov={45} near={0.1} far={100}>
 	<OrbitControls
 		enablePan={false}
-		enableZoom={false}
+		enableZoom={true}
 		enableDamping={true}
 		dampingFactor={0.05}
 		rotateSpeed={0.8}
+		zoomSpeed={0.6}
+		minDistance={2}
+		maxDistance={15}
 		maxPolarAngle={Math.PI / 2}
 		minPolarAngle={0.1}
 		{target}
 		{autoRotate}
-		autoRotateSpeed={1.0}
-		on:start={() => {
-			autoRotate = false;
-		}}
-		on:end={() => {
-			setTimeout(() => {
-				autoRotate = true;
-			}, 3000);
-		}}
 	/>
 </T.PerspectiveCamera>
 
