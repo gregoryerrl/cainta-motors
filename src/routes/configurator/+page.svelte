@@ -1,51 +1,65 @@
 <script lang="ts">
 	import Scene from '$lib/components/three/Scene.svelte';
-	import { vehicles } from '$lib/data/vehicles';
-	import { Check, Download, Share2 } from 'lucide-svelte';
+	import { Download, Share2 } from 'lucide-svelte';
 
-	let selectedVehicle = $state(vehicles[0]);
-	let selectedColor = $state(selectedVehicle.colors[0]);
-	let selectedOptions = $state({
-		wheels: 'standard',
-		interior: 'black',
-		package: 'standard'
-	});
+	interface CarModel {
+		id: string;
+		modelName: string;
+		modelUrl: string;
+		scale: number;
+		position: [number, number, number];
+		target: [number, number, number];
+		price: number;
+	}
 
-	const wheelOptions = [
-		{ id: 'standard', name: '17" Alloy Wheels', price: 0 },
-		{ id: 'sport', name: '18" Sport Wheels', price: 45000 },
-		{ id: 'premium', name: '19" Premium Wheels', price: 75000 }
-	];
-
-	const interiorOptions = [
-		{ id: 'black', name: 'Black Leather', price: 0 },
-		{ id: 'beige', name: 'Beige Leather', price: 15000 },
-		{ id: 'red', name: 'Red Sport Leather', price: 25000 }
-	];
-
-	const packageOptions = [
-		{ id: 'standard', name: 'Standard', price: 0, features: ['Basic Audio', 'Manual Seats'] },
+	const carModels: CarModel[] = [
 		{
-			id: 'premium',
-			name: 'Premium',
-			price: 120000,
-			features: ['Premium Audio', 'Power Seats', 'Ambient Lighting']
+			id: 'mercedes-maybach',
+			modelName: 'Mercedes-Benz Maybach 2022',
+			modelUrl: '/mercedes-benz_maybach_2022.glb',
+			scale: 1,
+			position: [4, 2, 4],
+			target: [0, 0, 0],
+			price: 12500000
 		},
 		{
-			id: 'sport',
-			name: 'Sport',
-			price: 180000,
-			features: ['Sport Suspension', 'Sport Exhaust', 'Track Mode']
+			id: 'honda-city-rs',
+			modelName: 'Honda City RS',
+			modelUrl: '/honda_city_rs.glb',
+			scale: 3.8,
+			position: [4, 1, 4],
+			target: [0, 0, 2.5],
+			price: 1115000
 		}
 	];
 
-	const calculateTotal = () => {
-		const wheelPrice = wheelOptions.find((w) => w.id === selectedOptions.wheels)?.price || 0;
-		const interiorPrice =
-			interiorOptions.find((i) => i.id === selectedOptions.interior)?.price || 0;
-		const packagePrice = packageOptions.find((p) => p.id === selectedOptions.package)?.price || 0;
-		return selectedVehicle.price + wheelPrice + interiorPrice + packagePrice;
-	};
+	let selectedModel = $state(carModels[0]);
+	let isLoading = $state(true); // Start with loading true for initial load
+	let loadingKey = $state(0);
+
+	// Initialize first load
+	$effect(() => {
+		// Only run once on mount
+		if (loadingKey === 0) {
+			setTimeout(() => {
+				isLoading = false;
+			}, 2000); // Give time for initial model to load
+		}
+	});
+
+	// Track loading state when model changes
+	function selectModel(model: CarModel) {
+		if (selectedModel.id === model.id) return; // Don't reload if same model
+
+		selectedModel = model;
+		isLoading = true;
+		loadingKey++; // Force re-render of Scene component
+
+		// Use a timeout as fallback since GLTF events might not work properly
+		setTimeout(() => {
+			isLoading = false;
+		}, 2000); // 2 seconds should be enough for model loading
+	}
 
 	const formatPrice = (price: number) => {
 		return new Intl.NumberFormat('en-PH', {
@@ -63,158 +77,67 @@
 <section class="min-h-screen bg-black py-8">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 		<h1 class="text-center text-4xl font-thin text-white md:text-5xl">Configure Your Dream Car</h1>
-		<p class="mt-4 text-center text-lg font-thin text-gray-500">
-			Customize every detail to match your style
-		</p>
+		<p class="mt-4 text-center text-lg font-thin text-gray-500">Select your preferred model</p>
 
 		<div class="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
 			<div class="lg:col-span-2">
-				<div class="aspect-video overflow-hidden rounded-lg bg-white/6">
-					<Scene class="h-full w-full" />
+				<div class="relative aspect-video overflow-hidden rounded-lg bg-white/6">
+					{#key loadingKey}
+						<Scene
+							class="h-full w-full"
+							scale={selectedModel.scale}
+							objectPosition={selectedModel.position}
+							model={selectedModel.modelUrl}
+							target={selectedModel.target}
+						/>
+					{/key}
+
+					{#if isLoading}
+						<div
+							class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+						>
+							<div class="flex flex-col items-center gap-4">
+								<div
+									class="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-white"
+								></div>
+								<p class="text-sm font-thin text-gray-300">Loading {selectedModel.modelName}...</p>
+							</div>
+						</div>
+					{/if}
 				</div>
 
 				<div class="mt-8 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-4 text-xl font-thin text-white">Select Model</h2>
-					<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-						{#each vehicles as vehicle}
+					<h2 class="mb-6 text-xl font-thin text-white">Select Model</h2>
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+						{#each carModels as model}
 							<button
-								onclick={() => {
-									selectedVehicle = vehicle;
-									selectedColor = vehicle.colors[0];
-								}}
-								class="border p-4 text-left transition-all {selectedVehicle.id === vehicle.id
+								onclick={() => selectModel(model)}
+								class="border p-6 text-left transition-all {selectedModel.id === model.id
 									? 'border-red-900 bg-red-900/20'
 									: 'border-gray-700 hover:border-gray-600'}"
 							>
-								<p class="font-light text-white">
-									{vehicle.brand}
-									{vehicle.model}
-									{vehicle.variant}
+								<p class="text-lg font-light text-white">
+									{model.modelName}
 								</p>
-								<p class="text-sm font-thin text-gray-500">{formatPrice(vehicle.price)}</p>
+								<p class="mt-2 text-sm font-thin text-gray-500">
+									Starting from {formatPrice(model.price)}
+								</p>
 							</button>
 						{/each}
 					</div>
 				</div>
 
 				<div class="mt-6 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-4 text-xl font-thin text-white">Exterior Color</h2>
-					<div class="flex gap-3">
-						{#each selectedVehicle.colors as color}
-							<button
-								onclick={() => (selectedColor = color)}
-								class="relative h-16 w-16 border transition-all {selectedColor.hex === color.hex
-									? 'scale-110 border-2 border-red-900'
-									: 'border border-gray-600'}"
-								style="background-color: {color.hex}"
-								title={color.name}
-							>
-								{#if selectedColor.hex === color.hex}
-									<Check
-										class="absolute inset-0 m-auto h-8 w-8 {color.hex === '#000000' ||
-										color.hex === '#4a4a4a'
-											? 'text-white'
-											: 'text-black'}"
-									/>
-								{/if}
-							</button>
-						{/each}
-					</div>
-					<p class="mt-3 font-thin text-gray-500">{selectedColor.name}</p>
-				</div>
-
-				<div class="mt-6 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-4 text-xl font-thin text-white">Wheels</h2>
+					<h2 class="mb-4 text-xl font-thin text-white">Model Information</h2>
 					<div class="space-y-3">
-						{#each wheelOptions as wheel}
-							<label
-								class="flex cursor-pointer items-center justify-between border p-4 transition-all {selectedOptions.wheels ===
-								wheel.id
-									? 'border-red-900 bg-red-900/20'
-									: 'border-gray-700 hover:border-gray-600'}"
-							>
-								<div class="flex items-center gap-3">
-									<input
-										type="radio"
-										name="wheels"
-										value={wheel.id}
-										checked={selectedOptions.wheels === wheel.id}
-										onchange={() => (selectedOptions.wheels = wheel.id)}
-										class="h-4 w-4 text-red-600"
-									/>
-									<span class="font-thin text-white">{wheel.name}</span>
-								</div>
-								<span class="font-thin text-gray-500">
-									{wheel.price > 0 ? `+${formatPrice(wheel.price)}` : 'Included'}
-								</span>
-							</label>
-						{/each}
-					</div>
-				</div>
-
-				<div class="mt-6 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-4 text-xl font-thin text-white">Interior</h2>
-					<div class="space-y-3">
-						{#each interiorOptions as interior}
-							<label
-								class="flex cursor-pointer items-center justify-between border p-4 transition-all {selectedOptions.interior ===
-								interior.id
-									? 'border-red-900 bg-red-900/20'
-									: 'border-gray-700 hover:border-gray-600'}"
-							>
-								<div class="flex items-center gap-3">
-									<input
-										type="radio"
-										name="interior"
-										value={interior.id}
-										checked={selectedOptions.interior === interior.id}
-										onchange={() => (selectedOptions.interior = interior.id)}
-										class="h-4 w-4 text-red-600"
-									/>
-									<span class="font-thin text-white">{interior.name}</span>
-								</div>
-								<span class="font-thin text-gray-500">
-									{interior.price > 0 ? `+${formatPrice(interior.price)}` : 'Included'}
-								</span>
-							</label>
-						{/each}
-					</div>
-				</div>
-
-				<div class="mt-6 border border-gray-800 bg-white/6 p-6">
-					<h2 class="mb-4 text-xl font-thin text-white">Package</h2>
-					<div class="space-y-3">
-						{#each packageOptions as pkg}
-							<label
-								class="cursor-pointer border p-4 transition-all {selectedOptions.package === pkg.id
-									? 'border-red-900 bg-red-900/20'
-									: 'border-gray-700 hover:border-gray-600'}"
-							>
-								<div class="flex items-start gap-3">
-									<input
-										type="radio"
-										name="package"
-										value={pkg.id}
-										checked={selectedOptions.package === pkg.id}
-										onchange={() => (selectedOptions.package = pkg.id)}
-										class="mt-1 h-4 w-4 text-red-600"
-									/>
-									<div class="flex-1">
-										<div class="flex items-center justify-between">
-											<span class="font-light text-white">{pkg.name}</span>
-											<span class="font-thin text-gray-500">
-												{pkg.price > 0 ? `+${formatPrice(pkg.price)}` : 'Included'}
-											</span>
-										</div>
-										<ul class="mt-2 space-y-1">
-											{#each pkg.features as feature}
-												<li class="text-sm font-thin text-gray-600">• {feature}</li>
-											{/each}
-										</ul>
-									</div>
-								</div>
-							</label>
-						{/each}
+						<p class="font-thin text-gray-400">
+							Experience the {selectedModel.modelName} in our interactive 3D viewer. Rotate the model
+							by dragging to view from different angles.
+						</p>
+						<p class="font-thin text-gray-400">
+							Contact our dealership for more customization options including colors, wheels,
+							interior packages, and additional features.
+						</p>
 					</div>
 				</div>
 			</div>
@@ -222,47 +145,29 @@
 			<div class="lg:col-span-1">
 				<div class="sticky top-24 space-y-6">
 					<div class="border border-gray-800 bg-white/6 p-6">
-						<h2 class="mb-4 text-xl font-thin text-white">Your Configuration</h2>
+						<h2 class="mb-4 text-xl font-thin text-white">Selected Configuration</h2>
 
-						<div class="space-y-3 border-b border-gray-800 pb-4">
-							<div class="flex justify-between">
-								<span class="font-thin text-gray-500">Model</span>
-								<span class="font-thin text-white">
-									{selectedVehicle.brand}
-									{selectedVehicle.model}
-									{selectedVehicle.variant}
-								</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="font-thin text-gray-500">Color</span>
-								<span class="font-thin text-white">{selectedColor.name}</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="font-thin text-gray-500">Wheels</span>
-								<span class="font-thin text-white">
-									{wheelOptions.find((w) => w.id === selectedOptions.wheels)?.name}
-								</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="font-thin text-gray-500">Interior</span>
-								<span class="font-thin text-white">
-									{interiorOptions.find((i) => i.id === selectedOptions.interior)?.name}
-								</span>
-							</div>
-							<div class="flex justify-between">
-								<span class="font-thin text-gray-500">Package</span>
-								<span class="font-thin text-white">
-									{packageOptions.find((p) => p.id === selectedOptions.package)?.name}
+						<div class="space-y-4 border-b border-gray-800 pb-4">
+							<div>
+								<span class="block font-thin text-gray-500">Model</span>
+								<span class="text-lg font-light text-white">
+									{selectedModel.modelName}
 								</span>
 							</div>
 						</div>
 
 						<div class="mt-4">
-							<div class="flex justify-between text-2xl font-thin">
-								<span class="text-white">Total Price</span>
-								<span class="text-red-900">{formatPrice(calculateTotal())}</span>
+							<div class="flex flex-col space-y-2">
+								<span class="font-thin text-gray-500">Base Price</span>
+								<span class="text-2xl font-thin text-red-900">
+									{formatPrice(selectedModel.price)}
+								</span>
 							</div>
 						</div>
+
+						<p class="mt-4 text-xs font-thin text-gray-600">
+							*Final price may vary based on additional customizations and features
+						</p>
 					</div>
 
 					<div class="space-y-3">

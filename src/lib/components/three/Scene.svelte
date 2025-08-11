@@ -3,13 +3,19 @@
 	import { interactivity } from '@threlte/extras';
 	import ModelViewer from './ModelViewer.svelte';
 
-	let { class: className = '' } = $props();
+	let {
+		class: className = '',
+		scale = 0.5,
+		objectPosition = [0, 0, 0],
+		model = '',
+		target = [0, 0, 0]
+	} = $props();
 </script>
 
 <div class="{className} relative" style="touch-action: none;">
 	<Canvas>
 		{@const _ = interactivity()}
-		<ModelViewer />
+		<ModelViewer {scale} {objectPosition} {model} {target} />
 	</Canvas>
 </div>
 

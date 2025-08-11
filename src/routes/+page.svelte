@@ -14,18 +14,28 @@
 </section>
 
 <!-- Split Section: 3D Model + Engineering Excellence -->
-<section id="showcase" class="relative bg-black" style="height: 100vh;">
+<section id="showcase" class="relative h-[150vh] bg-black lg:h-screen">
 	<div class="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
 		<!-- Left: 3D Model (Full height) -->
-		<div class="relative h-full bg-white/6">
-			<Scene class="h-full w-full" />
-			<div class="absolute bottom-8 left-8 z-10">
-				<p class="text-xs tracking-wider text-gray-500 uppercase">Drag to rotate</p>
-			</div>
+		<div class="relative hidden h-full bg-white/6 lg:block">
+			<Scene
+				class="h-full w-full"
+				scale={0.5}
+				objectPosition={[4, 2, 4]}
+				model="/mercedes-benz_maybach_2022.glb"
+			/>
+		</div>
+		<div class="relative h-[40vh] bg-white/6 pt-16 lg:hidden">
+			<Scene
+				class="h-full w-full"
+				scale={1}
+				objectPosition={[4, 2, 4]}
+				model="/mercedes-benz_maybach_2022.glb"
+			/>
 		</div>
 
 		<!-- Right: Engineering Excellence (Full height) -->
-		<div class="relative h-full bg-white/6">
+		<div class="relative h-[110vh] bg-white/6">
 			<div class="flex h-full items-center px-8 lg:px-16">
 				<EngineeringExcellence />
 			</div>

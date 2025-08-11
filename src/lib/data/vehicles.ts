@@ -10,6 +10,9 @@ export interface Vehicle {
 	image: string;
 	images: string[];
 	modelPath?: string;
+	modelScale?: number;
+	modelPosition?: [number, number, number];
+	modelTarget?: [number, number, number];
 	features: string[];
 	specifications: {
 		engine: string;
@@ -51,7 +54,10 @@ export const vehicles: Vehicle[] = [
 			'/honda/honda4.jpg',
 			'/honda/honda5.jpg'
 		],
-		modelPath: '/src/lib/models/honda_city_rs.glb',
+		modelPath: '/honda_city_rs.glb',
+		modelScale: 3.8,
+		modelPosition: [4, 1, 4] as [number, number, number],
+		modelTarget: [0, 0, 2.5] as [number, number, number],
 		features: [
 			'Honda SENSING',
 			'LED Headlights with DRL',
@@ -136,6 +142,10 @@ export const vehicles: Vehicle[] = [
 		category: 'sedan',
 		image: '/mazda/mazda1.jpg',
 		images: ['/mazda/mazda2.jpg'],
+		modelPath: '/mazda-3.glb',
+		modelScale: 0.1,
+		modelPosition: [30, 20, 30] as [number, number, number],
+		modelTarget: [0, 0, 0] as [number, number, number],
 		features: [
 			'i-Activsense Safety Features',
 			'Bose Premium Audio',
@@ -162,6 +172,62 @@ export const vehicles: Vehicle[] = [
 			{ name: 'Soul Red Crystal', hex: '#b91c1c' },
 			{ name: 'Machine Grey', hex: '#6b7280' },
 			{ name: 'Snowflake White Pearl', hex: '#fafafa' }
+		]
+	},
+	{
+		id: '4',
+		slug: 'mercedes-benz-maybach-s-class',
+		brand: 'Mercedes-Benz',
+		model: 'Maybach S-Class',
+		variant: 'S 580 4MATIC',
+		price: 12500000,
+		year: 2022,
+		category: 'luxury',
+		image: 'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Mercedes-Benz+Maybach',
+		images: [
+			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Front',
+			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Side',
+			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Rear',
+			'https://via.placeholder.com/800x600/1a1a1a/ffffff?text=Maybach+Interior'
+		],
+		modelPath: '/mercedes-benz_maybach_2022.glb',
+		modelScale: 1,
+		modelPosition: [4, 2, 4] as [number, number, number],
+		modelTarget: [0, 0, 0] as [number, number, number],
+		features: [
+			'MBUX Rear Tablet',
+			'Executive Rear Seat Package Plus',
+			'Burmester 4D Surround Sound System',
+			'MAGIC BODY CONTROL with ROAD SURFACE SCAN',
+			'Multibeam LED Headlights',
+			'Active Ambient Lighting',
+			'Refrigerated Compartment',
+			'Massage Seats with Hot Stone Function',
+			'Electronic Rear Doors',
+			'First-Class Rear Suite'
+		],
+		specifications: {
+			engine: '4.0L V8 Biturbo',
+			power: '496 HP @ 5,500 rpm',
+			torque: '700 Nm @ 2,000-4,500 rpm',
+			transmission: '9G-TRONIC Automatic',
+			drivetrain: '4MATIC AWD',
+			fuelType: 'Premium Gasoline',
+			fuelCapacity: '76L',
+			seatingCapacity: 4,
+			dimensions: {
+				length: '5,469 mm',
+				width: '1,921 mm',
+				height: '1,510 mm',
+				wheelbase: '3,396 mm'
+			}
+		},
+		colors: [
+			{ name: 'Obsidian Black Metallic', hex: '#0a0a0a' },
+			{ name: 'Designo Diamond White', hex: '#f5f5f5' },
+			{ name: 'Selenite Grey Metallic', hex: '#3c3c3c' },
+			{ name: 'Designo Hyacinth Red Metallic', hex: '#5c1e1e' },
+			{ name: 'Onyx Black', hex: '#000000' }
 		]
 	}
 ];

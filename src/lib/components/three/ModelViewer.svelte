@@ -4,7 +4,14 @@
 	import { getContext, onMount } from 'svelte';
 	import * as THREE from 'three';
 
+	let {
+		scale = 0.5,
+		objectPosition = [0, 0, 0],
+		model = '/mercedes-benz_maybach_2022.glb',
+		target = [0, 0, 0]
+	}: { scale?: number; objectPosition?: any; model?: string; target?: any } = $props();
 	let centerOffset = $state({ x: 0, y: 0, z: 0 });
+	let modelCenter = $state({ x: 0, y: 0, z: 0 });
 	let autoRotate = $state(true);
 
 	// Get loading context to report 3D model loading status
@@ -61,6 +68,14 @@
 
 		centerOffset = vehicleCenter;
 
+		// Set the model center for OrbitControls to rotate around
+		// This should be at ground level (y=0) and centered on the car
+		modelCenter = {
+			x: 0,
+			y: 0,
+			z: 0
+		};
+
 		// Setup shadows and materials
 		scene.traverse((child: any) => {
 			if (child.isMesh) {
@@ -76,18 +91,10 @@
 		if (loadingContext) {
 			loadingContext.updateAsset('3d-model', 'loaded');
 		}
-
-		console.log('=== MODEL CENTERING DEBUG ===');
-		console.log('Bounding box min:', min);
-		console.log('Bounding box max:', max);
-		console.log('Geometric center:', center);
-		console.log('Model size:', size);
-		console.log('Applied vehicle offset:', vehicleCenter);
-		console.log('=============================');
 	}
 </script>
 
-<T.PerspectiveCamera makeDefault position={[4, 1, 4]} fov={45} near={0.1} far={100}>
+<T.PerspectiveCamera makeDefault position={objectPosition} fov={45} near={0.1} far={100}>
 	<OrbitControls
 		enablePan={false}
 		enableZoom={false}
@@ -96,7 +103,7 @@
 		rotateSpeed={0.8}
 		maxPolarAngle={Math.PI / 2}
 		minPolarAngle={0.1}
-		target={[0, 0, 0]}
+		{target}
 		{autoRotate}
 		autoRotateSpeed={1.0}
 		on:start={() => {
@@ -150,8 +157,8 @@
 <!-- Wrapper group to center the model properly -->
 <T.Group>
 	<GLTF
-		url="/mercedes-benz_maybach_2022.glb"
-		scale={0.5}
+		url={model}
+		{scale}
 		position={[centerOffset.x, centerOffset.y, centerOffset.z]}
 		castShadow
 		receiveShadow
