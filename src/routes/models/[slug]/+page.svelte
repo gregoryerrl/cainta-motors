@@ -33,37 +33,142 @@
 	<title>{vehicle.brand} {vehicle.model} {vehicle.variant} - Cainta Motors</title>
 </svelte:head>
 
-<section class="min-h-screen bg-black py-20">
-	<!-- Back Navigation -->
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<a
-			href="/models"
-			class="inline-flex items-center gap-2 text-xs font-thin tracking-widest text-gray-500 uppercase transition-colors hover:text-white"
-		>
-			<ArrowLeft class="h-3 w-3" />
-			Back to Models
-		</a>
-	</div>
+<section class="min-h-screen bg-black">
+	<!-- Mobile Layout (md and below) -->
+	<div class="block md:hidden">
+		<!-- Mobile App-like Layout -->
+		<div class="fixed inset-0 flex flex-col bg-black">
+			<!-- Header -->
+			<div class="flex items-center justify-between border-b border-gray-800 bg-black p-4 pt-6">
+				<a
+					href="/models"
+					class="inline-flex items-center gap-2 text-xs font-thin tracking-widest text-gray-500 uppercase transition-colors hover:text-white"
+				>
+					<ArrowLeft class="h-3 w-3" />
+					Back
+				</a>
+				<div class="text-center">
+					<h1 class="text-lg font-thin tracking-wider text-white">
+						{vehicle.brand} {vehicle.model}
+					</h1>
+					<p class="text-xs font-thin tracking-widest text-gray-500 uppercase">
+						{vehicle.variant}
+					</p>
+				</div>
+				<div class="w-16"></div> <!-- Spacer for centering -->
+			</div>
 
-	<!-- Hero Section -->
-	<div class="mx-auto mt-12 max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="text-center">
-			<h1 class="text-5xl font-thin tracking-wider text-white md:text-7xl">
-				{vehicle.brand}
-				{vehicle.model}
-			</h1>
-			<p class="mt-4 text-2xl font-thin tracking-widest text-gray-500 uppercase">
-				{vehicle.variant}
-			</p>
-			<div class="mt-8">
-				<p class="text-xs font-thin tracking-widest text-gray-600 uppercase">Starting from</p>
-				<p class="mt-2 text-4xl font-thin text-red-900">{formatPrice(vehicle.price)}</p>
+			<!-- 3D Scene with Side Color Picker -->
+			<div class="flex-1 relative bg-white/6">
+				{#if vehicle.has3DModel && vehicle.modelPath}
+					<LazyScene
+						class="h-full w-full"
+						model={vehicle.modelPath}
+						scale={vehicle.modelScale || 1}
+						objectPosition={vehicle.modelPosition || [4, 2, 4]}
+						target={vehicle.modelTarget || [0, 0, 0]}
+						selectedColor={selectedColor.hex}
+						priority={true}
+						enableZoom={true}
+					/>
+				{:else}
+					<div class="flex h-full items-center justify-center text-gray-500">
+						No 3D Model Available
+					</div>
+				{/if}
+
+				<!-- Floating Color Picker -->
+				<div class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/90 backdrop-blur-sm border border-gray-800 p-3 rounded">
+					<h3 class="mb-3 text-xs font-thin tracking-widest text-gray-500 uppercase text-center">
+						Color
+					</h3>
+					<div class="flex flex-col gap-2">
+						{#each vehicle.colors as color}
+							<button
+								onclick={() => (selectedColor = color)}
+								class="relative h-12 w-12 border-2 transition-all {selectedColor.hex === color.hex
+									? 'scale-110 border-red-900 shadow-lg shadow-red-900/50'
+									: 'border-gray-700 hover:border-gray-600'}"
+								style="background-color: {color.hex}"
+								title={color.name}
+							>
+								{#if selectedColor.hex === color.hex}
+									<div class="absolute inset-0 flex items-center justify-center">
+										<div
+											class="h-2 w-2 rounded-full {color.hex === '#000000' ||
+											color.hex === '#4a4a4a'
+												? 'bg-white'
+												: 'bg-black'}"
+										></div>
+									</div>
+								{/if}
+							</button>
+						{/each}
+					</div>
+					<p class="mt-2 text-xs font-thin text-gray-400 text-center max-w-16 break-words leading-tight">{selectedColor.name}</p>
+				</div>
+
+				<!-- Price Badge -->
+				<div class="absolute right-4 top-4 z-10 bg-black/90 backdrop-blur-sm border border-gray-800 px-4 py-2 rounded">
+					<p class="text-xs font-thin tracking-widest text-gray-600 uppercase">From</p>
+					<p class="text-lg font-thin text-red-900">{formatPrice(vehicle.price)}</p>
+				</div>
+			</div>
+
+			<!-- Compact Bottom Panel -->
+			<div class="border-t border-gray-800 bg-black p-4">
+				<!-- Action Buttons -->
+				<div class="flex gap-3">
+					<a
+						href="/configurator"
+						class="flex-1 border border-red-900 py-3 text-center text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-red-900/20"
+					>
+						Configure
+					</a>
+					<a
+						href="/contact"
+						class="flex-1 border border-gray-700 py-3 text-center text-xs font-light tracking-widest text-white uppercase transition-all hover:border-gray-600 hover:bg-white/5"
+					>
+						Contact
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- Main Content Grid -->
-	<div class="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+	<!-- Desktop Layout (md and above) -->
+	<div class="hidden md:block py-20">
+		<!-- Back Navigation -->
+		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+			<a
+				href="/models"
+				class="inline-flex items-center gap-2 text-xs font-thin tracking-widest text-gray-500 uppercase transition-colors hover:text-white"
+			>
+				<ArrowLeft class="h-3 w-3" />
+				Back to Models
+			</a>
+		</div>
+
+		<!-- Hero Section -->
+		<div class="mx-auto mt-12 max-w-7xl px-4 sm:px-6 lg:px-8">
+			<div class="text-center">
+				<h1 class="text-5xl font-thin tracking-wider text-white md:text-7xl">
+					{vehicle.brand}
+					{vehicle.model}
+				</h1>
+				<p class="mt-4 text-2xl font-thin tracking-widest text-gray-500 uppercase">
+					{vehicle.variant}
+				</p>
+				<div class="mt-8">
+					<p class="text-xs font-thin tracking-widest text-gray-600 uppercase">Starting from</p>
+					<p class="mt-2 text-4xl font-thin text-red-900">{formatPrice(vehicle.price)}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Desktop Layout (md and above) -->
+	<div class="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8 hidden md:block">
 		<div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
 			<!-- Left Column - 3D Model and Gallery -->
 			<div class="space-y-8">
