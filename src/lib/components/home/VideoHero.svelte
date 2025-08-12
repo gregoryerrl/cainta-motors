@@ -79,9 +79,7 @@
 			oncanplaythrough={handleVideoLoaded}
 			onerror={handleVideoError}
 		>
-			<!-- Smaller video for mobile devices -->
-			<source src="/hero_video_mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
-			<!-- Full quality for desktop -->
+			<!-- Use same video for all devices until mobile-optimized version is available -->
 			<source src="/hero_video.mp4" type="video/mp4" />
 		</video>
 	{/if}

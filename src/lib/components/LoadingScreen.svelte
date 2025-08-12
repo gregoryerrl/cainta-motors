@@ -37,9 +37,9 @@
 		class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black"
 		style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: all; overflow: hidden;"
 		transition:fade={{ duration: 800 }}
-		on:wheel|preventDefault
-		on:touchmove|preventDefault
-		on:scroll|preventDefault
+		onwheel={(e) => e.preventDefault()}
+		ontouchmove={(e) => e.preventDefault()}
+		onscroll={(e) => e.preventDefault()}
 	>
 		<!-- Main Content -->
 		<div class="text-center">

@@ -50,6 +50,7 @@ npm run optimize:models  # GLTF model optimization script
 - TypeScript strict mode is enabled
 - Custom scrollbar styling in app.css
 - Touch-action controls for 3D canvas interaction
+- Loading screens disabled for performance - 3D models load directly
 
 ## Design System Guidelines
 
@@ -132,6 +133,18 @@ npm run optimize:models  # GLTF model optimization script
   target={vehicle.modelTarget}
   selectedColor={selectedColor.hex}
   priority={true}
+  enableZoom={false}
+/>
+
+// Model detail pages - with zoom enabled
+<LazyScene
+  model={vehicle.modelPath}
+  scale={vehicle.modelScale}
+  objectPosition={vehicle.modelPosition}
+  target={vehicle.modelTarget}
+  selectedColor={selectedColor.hex}
+  priority={true}
+  enableZoom={true}
 />
 
 // Configurator (Interactive customization)
@@ -173,13 +186,15 @@ autoRotate={false} // User controls
 
 ### Color Changing Implementation
 
-#### Model Detail Pages (Real-time Color Preview)
+#### Model Detail Pages (Real-time Color Preview with Zoom)
 
 - **Implementation**: `useGltf()` hook approach (not `<GLTF>` component)
 - **Material Targeting**: Model-specific logic to target car body materials only
 - **Supported Models**: Mercedes Maybach, Mazda 3
 - **Technical**: `material.color = new THREE.Color(selectedColor)` with `needsUpdate = true`
 - **Default Color**: Black (`#000000`) is the default selected color for all models
+- **Zoom Controls**: Enabled with scroll prevention and distance limits (2-15 units)
+- **Auto-rotation**: Pauses during interaction, resumes after 3 seconds
 
 ```javascript
 // Model-specific material targeting logic
@@ -261,11 +276,13 @@ if (model.includes('maybach')) {
 - **About** (`/about`): Company information with premium layout
 - **Contact** (`/contact`): Contact form and dealership information
 
-### Loading States
+### Performance Optimizations
 
-- 3D models use timeout-based loading (2 seconds)
-- Loading spinners with `animate-spin` and backdrop blur
-- Minimum loading time for smooth transitions
+- **Mobile Performance**: 3D models disabled on mobile devices (<768px) for speed
+- **Gallery Auto-Carousel**: 7-second intervals with crossfade transitions
+- **Scroll Prevention**: 3D viewers prevent page scroll when zooming is enabled
+- **Direct Loading**: Loading screens removed for faster 3D model rendering
+- **Lazy Loading**: Non-priority 3D scenes use intersection observer
 
 ## Svelte 5 Syntax
 
@@ -338,8 +355,8 @@ interface Vehicle {
 
 1. **Honda City RS** - Sedan (no 3D model)
 2. **Toyota Vios GR-S** - Sedan (no 3D model)
-3. **Mazda 3 Premium** - Sedan with 3D model and color changing (`material`)
-4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model and color changing (`Car_Paint_With_Flakes`)
+3. **Mazda 3 Premium** - Sedan with 3D model and color changing (`material`, scale: 0.4)
+4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model and color changing (`Car_Paint_With_Flakes`, scale: 0.5)
 
 ### Configurator Models (Interactive Customization)
 

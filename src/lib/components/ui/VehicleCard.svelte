@@ -11,7 +11,11 @@
 
 	let { vehicle, forceDisable3D = false }: Props = $props();
 
-	let selectedColor = $state(vehicle.colors.find(c => c.hex === '#000000') || vehicle.colors.find(c => c.hex.toLowerCase().includes('black')) || vehicle.colors[0]);
+	let selectedColor = $state(
+		vehicle.colors.find((c) => c.hex === '#000000') ||
+			vehicle.colors.find((c) => c.hex.toLowerCase().includes('black')) ||
+			vehicle.colors[0]
+	);
 	let showColorPicker = $state(false);
 	let isMobile = $state(false);
 
@@ -26,17 +30,19 @@
 	onMount(() => {
 		// Detect mobile devices for performance optimization
 		isMobile = window.innerWidth < 768;
-		
+
 		const handleResize = () => {
 			isMobile = window.innerWidth < 768;
 		};
-		
+
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	});
 
 	// Show 3D model only if not mobile (or not forced disabled) and vehicle supports it
-	let show3DModel = $derived(!forceDisable3D && !isMobile && vehicle.has3DModel && vehicle.modelPath);
+	let show3DModel = $derived(
+		!forceDisable3D && !isMobile && vehicle.has3DModel && vehicle.modelPath
+	);
 </script>
 
 <article
@@ -47,12 +53,14 @@
 			<!-- 3D Model Viewer -->
 			<div class="h-full w-full bg-black">
 				<LazyScene
+					class="h-full w-full"
 					model={vehicle.modelPath}
-					scale={vehicle.modelScale}
-					objectPosition={vehicle.modelPosition}
-					target={vehicle.modelTarget}
-					selectedColor={vehicle.supportsColorChange ? selectedColor.hex : undefined}
-					priority={false}
+					scale={vehicle.modelScale || 1}
+					objectPosition={vehicle.modelPosition || [4, 2, 4]}
+					target={vehicle.modelTarget || [0, 0, 0]}
+					selectedColor={selectedColor.hex}
+					priority={true}
+					enableZoom={false}
 				/>
 			</div>
 		{:else}
@@ -109,12 +117,15 @@
 					onclick={() => (showColorPicker = !showColorPicker)}
 					class="flex items-center gap-2 bg-black/80 px-3 py-2 text-xs font-thin tracking-wider text-white transition-all hover:bg-black/90"
 				>
-					<div class="h-3 w-3 rounded-full border border-gray-400" style="background-color: {selectedColor.hex}"></div>
+					<div
+						class="h-3 w-3 rounded-full border border-gray-400"
+						style="background-color: {selectedColor.hex}"
+					></div>
 					{selectedColor.name}
 				</button>
 
 				{#if showColorPicker}
-					<div class="absolute bottom-full left-0 mb-2 bg-black/90 border border-gray-700 p-3">
+					<div class="absolute bottom-full left-0 mb-2 border border-gray-700 bg-black/90 p-3">
 						<div class="grid grid-cols-2 gap-2">
 							{#each vehicle.colors as color}
 								<button
@@ -122,9 +133,15 @@
 										selectedColor = color;
 										showColorPicker = false;
 									}}
-									class="flex items-center gap-2 px-2 py-1 text-xs font-thin text-white transition-all hover:bg-white/10 {selectedColor.hex === color.hex ? 'bg-red-900/20' : ''}"
+									class="flex items-center gap-2 px-2 py-1 text-xs font-thin text-white transition-all hover:bg-white/10 {selectedColor.hex ===
+									color.hex
+										? 'bg-red-900/20'
+										: ''}"
 								>
-									<div class="h-3 w-3 rounded-full border border-gray-400" style="background-color: {color.hex}"></div>
+									<div
+										class="h-3 w-3 rounded-full border border-gray-400"
+										style="background-color: {color.hex}"
+									></div>
 									<span class="truncate">{color.name}</span>
 								</button>
 							{/each}

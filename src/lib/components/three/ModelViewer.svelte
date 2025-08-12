@@ -11,7 +11,8 @@
 		target = [0, 0, 0],
 		selectedColor = '#ffffff',
 		materialColors = {},
-		onMaterialsLoaded
+		onMaterialsLoaded,
+		enableZoom = false
 	}: { 
 		scale?: number; 
 		objectPosition?: any; 
@@ -20,6 +21,7 @@
 		selectedColor?: string;
 		materialColors?: Record<string, string>;
 		onMaterialsLoaded?: (materials: string[]) => void;
+		enableZoom?: boolean;
 	} = $props();
 	let centerOffset = $state({ x: 0, y: 0, z: 0 });
 	let autoRotate = $state(true);
@@ -181,7 +183,7 @@
 <T.PerspectiveCamera makeDefault position={objectPosition} fov={45} near={0.1} far={100}>
 	<OrbitControls
 		enablePan={false}
-		enableZoom={false}
+		{enableZoom}
 		enableDamping={true}
 		dampingFactor={0.05}
 		rotateSpeed={0.8}
@@ -190,6 +192,9 @@
 		{target}
 		{autoRotate}
 		autoRotateSpeed={1.0}
+		zoomSpeed={0.6}
+		minDistance={2}
+		maxDistance={15}
 		on:start={() => {
 			autoRotate = false;
 		}}

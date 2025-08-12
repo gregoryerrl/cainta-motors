@@ -2,6 +2,7 @@
 	import { Canvas } from '@threlte/core';
 	import { interactivity } from '@threlte/extras';
 	import ModelViewer from './ModelViewer.svelte';
+	import { onMount } from 'svelte';
 
 	let {
 		class: className = '',
@@ -11,7 +12,8 @@
 		target = [0, 0, 0],
 		selectedColor = '#ffffff',
 		materialColors = {},
-		onMaterialsLoaded
+		onMaterialsLoaded,
+		enableZoom = false
 	}: {
 		class?: string;
 		scale?: number;
@@ -21,13 +23,46 @@
 		selectedColor?: string;
 		materialColors?: Record<string, string>;
 		onMaterialsLoaded?: (materials: string[]) => void;
+		enableZoom?: boolean;
 	} = $props();
+
+	let containerElement: HTMLDivElement;
+
+	// Prevent wheel events from propagating to page scroll when zooming is enabled
+	function handleWheel(event: WheelEvent) {
+		if (enableZoom) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	}
+
+	// Handle touch events for mobile zoom prevention
+	function handleTouchMove(event: TouchEvent) {
+		if (enableZoom && event.touches.length === 2) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	}
+
+	onMount(() => {
+		if (containerElement && enableZoom) {
+			// Desktop wheel events
+			containerElement.addEventListener('wheel', handleWheel, { passive: false });
+			// Mobile touch events
+			containerElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+			return () => {
+				containerElement.removeEventListener('wheel', handleWheel);
+				containerElement.removeEventListener('touchmove', handleTouchMove);
+			};
+		}
+	});
 </script>
 
-<div class="{className} relative" style="touch-action: none;">
+<div bind:this={containerElement} class="{className} relative" style="touch-action: none;">
 	<Canvas>
 		{@const _ = interactivity()}
-		<ModelViewer {scale} {objectPosition} {model} {target} {selectedColor} {materialColors} {onMaterialsLoaded} />
+		<ModelViewer {scale} {objectPosition} {model} {target} {selectedColor} {materialColors} {onMaterialsLoaded} {enableZoom} />
 	</Canvas>
 </div>
 

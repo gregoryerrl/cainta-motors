@@ -145,7 +145,7 @@ export const vehicles: Vehicle[] = [
 		image: '/mazda/mazda1.jpg',
 		images: ['/mazda/mazda2.jpg'],
 		modelPath: '/gltf/mazda-3/scene.gltf',
-		modelScale: 0.02,
+		modelScale: 0.01,
 		modelPosition: [4, 2, 4] as [number, number, number],
 		modelTarget: [0, 0, 0] as [number, number, number],
 		has3DModel: true,

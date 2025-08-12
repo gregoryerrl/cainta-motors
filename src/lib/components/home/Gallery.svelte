@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronLeft, ChevronRight, Expand } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight } from 'lucide-svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 
@@ -98,7 +98,7 @@
 						{/if}
 					{/each}
 
-					<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+					<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
 
 					<div class="absolute bottom-0 left-0 p-8">
 						{#each images as image, index}

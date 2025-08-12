@@ -12,7 +12,8 @@
 		priority = false,
 		selectedColor = '#ffffff',
 		materialColors = {},
-		onMaterialsLoaded
+		onMaterialsLoaded,
+		enableZoom = false
 	}: {
 		class?: string;
 		scale?: number;
@@ -24,6 +25,7 @@
 		selectedColor?: string;
 		materialColors?: Record<string, string>;
 		onMaterialsLoaded?: (materials: string[]) => void;
+		enableZoom?: boolean;
 	} = $props();
 
 	let isVisible = $state(priority);
@@ -65,7 +67,7 @@
 
 <div bind:this={container} class={className}>
 	{#if isVisible}
-		<Scene {scale} {objectPosition} {model} {target} {selectedColor} {materialColors} {onMaterialsLoaded} class={className} />
+		<Scene {scale} {objectPosition} {model} {target} {selectedColor} {materialColors} {onMaterialsLoaded} {enableZoom} class={className} />
 	{:else if placeholder}
 		<!-- Placeholder while not loaded -->
 		<div class="flex h-full w-full animate-pulse items-center justify-center bg-white/6">

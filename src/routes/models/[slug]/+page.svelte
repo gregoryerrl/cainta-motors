@@ -77,6 +77,7 @@
 							target={vehicle.modelTarget || [0, 0, 0]}
 							selectedColor={selectedColor.hex}
 							priority={true}
+							enableZoom={true}
 						/>
 					{:else}
 						<NoModelScene class="h-full w-full" />
