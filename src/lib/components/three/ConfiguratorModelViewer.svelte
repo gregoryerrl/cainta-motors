@@ -46,37 +46,51 @@
 	/>
 </T.PerspectiveCamera>
 
-<!-- Optimized automotive lighting setup (5 lights total) -->
-<!-- Main key light with optimized shadows -->
+<!-- Professional Studio Lighting Setup for Color Accuracy -->
+<!-- Primary Key Light - Balanced intensity -->
 <T.DirectionalLight
-	position={[10, 15, 10]}
-	intensity={2.2}
+	position={[10, 10, 5]}
+	intensity={1.8}
+	color={0xffffff}
 	castShadow
-	shadow.camera.left={-8}
-	shadow.camera.right={8}
-	shadow.camera.top={8}
-	shadow.camera.bottom={-8}
-	shadow.mapSize.width={1024}
-	shadow.mapSize.height={1024}
-	shadow.bias={-0.001}
+	shadow.camera.left={-20}
+	shadow.camera.right={20}
+	shadow.camera.top={20}
+	shadow.camera.bottom={-20}
+	shadow.mapSize.width={2048}
+	shadow.mapSize.height={2048}
+	shadow.bias={-0.0005}
 />
 
-<!-- Fill light (no shadows for performance) -->
-<T.DirectionalLight position={[-8, 10, -5]} intensity={1.0} />
+<!-- Fill Light - Opposite side for balanced illumination -->
+<T.DirectionalLight
+	position={[-8, 6, -3]}
+	intensity={0.9}
+	color={0xffffff}
+/>
 
-<!-- Ambient lighting for overall illumination -->
-<T.AmbientLight intensity={0.7} />
+<!-- Rim Light - Highlights edges and contours -->
+<T.DirectionalLight
+	position={[-10, 15, -8]}
+	intensity={0.6}
+	color={0xffffff}
+/>
 
-<!-- Hemisphere light for natural sky/ground lighting -->
-<T.HemisphereLight color={0xffffff} groundColor={0x444444} intensity={0.8} />
+<!-- Front Fill Light - Better visibility for dark colors -->
+<T.DirectionalLight
+	position={[0, 5, 12]}
+	intensity={0.5}
+	color={0xffffff}
+/>
 
-<!-- Single accent spotlight for highlights -->
-<T.SpotLight
-	position={[0, 12, 0]}
-	angle={0.6}
-	penumbra={0.8}
-	intensity={1.5}
-	target.position={[0, 0, 0]}
+<!-- Ambient Light - Increased for better dark color visibility -->
+<T.AmbientLight intensity={0.7} color={0xffffff} />
+
+<!-- Natural Sky/Ground - Brighter ground reflection -->
+<T.HemisphereLight 
+	color={0xffffff} 
+	groundColor={0xf0f0f0}
+	intensity={0.4} 
 />
 
 <!-- Car models with color change capability -->

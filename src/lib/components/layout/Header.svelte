@@ -35,7 +35,7 @@
 						</a>
 					{/each}
 					<button
-						class="border border-red-900 px-6 py-2 text-xs font-light tracking-widest text-white transition-all hover:bg-red-900/20"
+						class="btn-red-fill border border-red-900 px-6 py-2 text-xs font-light tracking-widest text-white"
 					>
 						TEST DRIVE
 					</button>
@@ -68,7 +68,7 @@
 					</a>
 				{/each}
 				<button
-					class="mt-4 w-full border border-red-900 px-6 py-3 text-sm font-light tracking-widest text-white transition-all hover:bg-red-900/20"
+					class="btn-red-fill mt-4 w-full border border-red-900 px-6 py-3 text-sm font-light tracking-widest text-white"
 				>
 					TEST DRIVE
 				</button>

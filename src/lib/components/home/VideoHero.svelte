@@ -114,7 +114,7 @@
 			>
 				<a
 					href="/models"
-					class="border border-red-900 px-12 py-3 text-sm font-light tracking-widest text-white transition-all hover:border-red-800 hover:bg-red-900/20"
+					class="btn-red-fill border border-red-900 px-12 py-3 text-sm font-light tracking-widest text-white"
 				>
 					EXPLORE MODELS
 				</a>

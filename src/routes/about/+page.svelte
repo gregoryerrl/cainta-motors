@@ -45,7 +45,7 @@
 		<div
 			class="relative overflow-hidden border border-red-900 bg-gradient-to-br from-red-900/30 to-red-900/10 p-12 text-center"
 		>
-			<div class="absolute inset-0 bg-black/20" />
+			<div class="absolute inset-0 bg-black/20"></div>
 			<div class="relative">
 				<h1 class="text-5xl font-thin text-white md:text-6xl">About Cainta Motors</h1>
 				<p class="mx-auto mt-6 max-w-3xl text-lg font-thin text-white/90">

@@ -84,7 +84,7 @@ npm run optimize:models  # GLTF model optimization script
 ### Available 3D Models
 
 - **Mercedes-Benz Maybach 2022**: `/gltf/mercedes-benz_maybach_2022/scene.gltf`
-- **Mazda 3**: `/gltf/mazda-3/scene.gltf`
+- **Mazda 3**: `/gltf/mazda-3/scene.gltf` (scale: 0.01)
 - **Car1 (Porsche Carrera GT)**: `/car1/car1.gltf` - Configurator model with color/accessory support
 - **Car2 (McLaren P1)**: `/car2/car2.gltf` - Configurator model with color/accessory support
 
@@ -94,10 +94,12 @@ npm run optimize:models  # GLTF model optimization script
 
 - Uses `Scene.svelte` → `ModelViewer.svelte` → `LazyScene.svelte`
 - Loads any GLTF model via `model` prop with `useGltf()` hook approach
-- Auto-rotation enabled, zoom disabled
+- **CRITICAL**: Uses `<T is={loadedGltf.scene} />` for rendering (NOT `<primitive>` or GLTF component)
+- Auto-rotation enabled, zoom configurable via `enableZoom` prop
 - **Real-time color changing** support via `selectedColor` prop
 - Model-specific material targeting for car body parts only
 - Component chain: Page → `LazyScene` → `Scene` → `ModelViewer`
+- **Distance constraints**: Always set `minDistance={2}` and `maxDistance={15}` to prevent rendering issues
 
 #### Models Page Integration (VehicleCard with 3D)
 
@@ -107,6 +109,7 @@ npm run optimize:models  # GLTF model optimization script
 - **Color Selection**: Click color button to open picker, select colors for real-time preview
 - **Default Color**: All models start with black (`#000000`) as selected color
 - **Material Targeting**: Only Mazda 3 and Maybach support color changes on `/models` page
+- **IMPORTANT**: Must use `selectedColor={selectedColor.hex}` (NOT hardcoded string) for reactive color changes
 
 #### Configurator System (Interactive Customization)
 
@@ -168,14 +171,24 @@ npm run optimize:models  # GLTF model optimization script
 ### Controls Configuration
 
 ```typescript
-// General viewing - Auto-rotate showcase
+// General viewing - Auto-rotate showcase (homepage, models cards)
 enablePan={false}
-enableZoom={false}
+{enableZoom} // Usually false for showcases
 enableDamping={true}
 autoRotate={true}
 autoRotateSpeed={1.0}
+minDistance={2} // ALWAYS set these to prevent rendering issues
+maxDistance={15} // ALWAYS set these to prevent rendering issues
 
-// Configurator - User interaction
+// Model detail pages - User interaction with zoom
+enablePan={false}
+enableZoom={true}
+zoomSpeed={0.6}
+minDistance={2}
+maxDistance={15}
+autoRotate={true} // Pauses on interaction, resumes after 3s
+
+// Configurator - Full user control
 enablePan={false}
 enableZoom={true}
 zoomSpeed={0.6}
@@ -401,3 +414,73 @@ interface Vehicle {
 - **Configuration**: `vercel.json` with security headers and caching rules
 - **Adapter**: `@sveltejs/adapter-vercel`
 - **Build Output**: ~33KB main bundle, ~819KB Three.js chunk (before gzip)
+
+## 3D Troubleshooting Guide
+
+### Critical Issues and Solutions
+
+#### Issue: 3D Models Not Rendering (Black/Empty Scenes)
+
+**Root Cause**: Setting `minDistance` and `maxDistance` to `undefined` when `enableZoom={false}`
+
+**Solution**: Always set fixed distance constraints:
+```typescript
+minDistance={2}
+maxDistance={15}
+```
+
+**Why**: When distance constraints are undefined, the camera can position itself at invalid distances where models are clipped or invisible.
+
+#### Issue: Color Changes Not Working
+
+**Root Causes & Solutions**:
+
+1. **Wrong rendering approach**: 
+   - ❌ Don't use `<GLTF>` component for models that need color changes
+   - ❌ Don't use `<primitive object={scene} />`
+   - ✅ Use `useGltf()` hook with `<T is={loadedGltf.scene} />`
+
+2. **Hardcoded color values**:
+   - ❌ `selectedColor="#000000"`
+   - ✅ `selectedColor={selectedColor.hex}`
+
+3. **Missing reactivity**:
+   - ✅ Ensure `$effect()` accesses reactive variables to trigger updates
+
+#### Issue: 3D Models Disappear When `enableZoom={false}`
+
+**Root Cause**: Camera distance constraints being set to `undefined`
+
+**Solution**: Always provide distance values regardless of zoom setting:
+```typescript
+minDistance={2}
+maxDistance={15}
+```
+
+#### Issue: Svelte Self-Closing Tag Warnings
+
+**Root Cause**: Using self-closing tags for non-void HTML elements
+
+**Common Warnings**:
+- `<primitive ... />` should be `<primitive ...></primitive>`
+- `<div ... />` should be `<div ...></div>`
+
+**Solution**: Always use proper opening/closing tags for non-void elements in Svelte components.
+
+### Working Architecture (DO NOT CHANGE)
+
+The current ModelViewer architecture is:
+```
+useGltf(model) → $effect() → <T is={loadedGltf.scene} />
+```
+
+This specific combination works for:
+- ✅ Model rendering
+- ✅ Color changing
+- ✅ Material targeting
+- ✅ Zoom controls
+
+**DO NOT** switch to:
+- `GLTF` component approach (breaks color changes)
+- `primitive` object rendering (doesn't work in Threlte)
+- Conditional distance constraints (breaks rendering)

@@ -8,12 +8,15 @@ import path from 'path';
 const execAsync = promisify(exec);
 
 const models = [
-	{ input: 'static/honda_city_rs.glb', output: 'static/honda_city_rs_optimized.glb' },
 	{
 		input: 'static/mercedes-benz_maybach_2022.glb',
 		output: 'static/mercedes-benz_maybach_2022_optimized.glb'
 	},
-	{ input: 'static/mazda-3.glb', output: 'static/mazda-3_optimized.glb' }
+	{ input: 'static/mazda-3.glb', output: 'static/mazda-3_optimized.glb' },
+	{ input: 'static/car1/car1.gltf', output: 'static/car1/car1_optimized.glb' },
+	{ input: 'static/car2/car2.gltf', output: 'static/car2/car2_optimized.glb' },
+	{ input: 'static/gltf/mazda-3/scene.gltf', output: 'static/gltf/mazda-3/scene_optimized.glb' },
+	{ input: 'static/gltf/mercedes-benz_maybach_2022/scene.gltf', output: 'static/gltf/mercedes-benz_maybach_2022/scene_optimized.glb' }
 ];
 
 async function optimizeModel(input, output) {
@@ -25,7 +28,7 @@ async function optimizeModel(input, output) {
 		const originalSize = (stats.size / 1024 / 1024).toFixed(2);
 		console.log(`  Original size: ${originalSize} MB`);
 
-		// Run optimization with Draco compression (simplified command)
+		// Run Draco compression only (more reliable)
 		const command = `npx gltf-transform draco ${input} ${output}`;
 		const { stdout, stderr } = await execAsync(command);
 		if (stderr) console.log(`  Warning: ${stderr}`);

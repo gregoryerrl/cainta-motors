@@ -108,7 +108,16 @@
 	style="touch-action: none;"
 	role="application"
 >
-	<Canvas>
+	<Canvas
+		rendererParameters={{
+			antialias: true,
+			alpha: true,
+			physicallyCorrectLights: true,
+			toneMapping: 'neutral',
+			toneMappingExposure: 1.0
+		}}
+		colorManagementEnabled={true}
+	>
 		{@const _ = interactivity()}
 		<ConfiguratorModelViewer
 			{scale}

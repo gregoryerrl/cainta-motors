@@ -6,6 +6,8 @@
 	import SmoothScrollManager from '$lib/components/SmoothScrollManager.svelte';
 	import LoadingManager from '$lib/components/LoadingManager.svelte';
 	import LoadingScreen from '$lib/components/LoadingScreen.svelte';
+	import PerformanceMonitor from '$lib/components/PerformanceMonitor.svelte';
+	import { dev } from '$app/environment';
 
 	let { children } = $props();
 </script>
@@ -29,3 +31,6 @@
 	<!-- Loading screen overlay - positioned last for proper z-index layering -->
 	<LoadingScreen />
 </LoadingManager>
+
+<!-- Performance monitoring in development -->
+<PerformanceMonitor enabled={dev} showStats={dev} />

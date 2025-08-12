@@ -62,7 +62,7 @@
 		<div class="mt-8 flex gap-6">
 			<a
 				href="/models"
-				class="border border-red-900 px-8 py-2 text-xs font-light tracking-widest text-white transition-all hover:bg-red-900/20"
+				class="btn-red-fill border border-red-900 px-8 py-2 text-xs font-light tracking-widest text-white"
 			>
 				EXPLORE MODELS
 			</a>

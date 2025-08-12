@@ -142,7 +142,7 @@
 
 							<button
 								type="submit"
-								class="flex w-full items-center justify-center gap-2 border border-red-900 px-8 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-red-900/20"
+								class="btn-red-fill flex w-full items-center justify-center gap-2 border border-red-900 px-8 py-3 text-xs font-light tracking-widest text-white uppercase"
 							>
 								<Send class="h-4 w-4" />
 								Send Message
@@ -210,24 +210,21 @@
 						>
 							Build Your Car →
 						</a>
-						<a
-							href="#"
-							class="block text-sm font-thin text-gray-500 transition-colors hover:text-white"
+						<button
+							class="block text-left text-sm font-thin text-gray-500 transition-colors hover:text-white"
 						>
 							Schedule Service →
-						</a>
-						<a
-							href="#"
-							class="block text-sm font-thin text-gray-500 transition-colors hover:text-white"
+						</button>
+						<button
+							class="block text-left text-sm font-thin text-gray-500 transition-colors hover:text-white"
 						>
 							Financing Calculator →
-						</a>
-						<a
-							href="#"
-							class="block text-sm font-thin text-gray-500 transition-colors hover:text-white"
+						</button>
+						<button
+							class="block text-left text-sm font-thin text-gray-500 transition-colors hover:text-white"
 						>
 							Download Brochure →
-						</a>
+						</button>
 					</div>
 				</div>
 

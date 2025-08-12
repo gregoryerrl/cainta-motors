@@ -60,7 +60,16 @@
 </script>
 
 <div bind:this={containerElement} class="{className} relative" style="touch-action: none;">
-	<Canvas>
+	<Canvas
+		rendererParameters={{
+			antialias: true,
+			alpha: true,
+			physicallyCorrectLights: true,
+			toneMapping: 'neutral',
+			toneMappingExposure: 1.0
+		}}
+		colorManagementEnabled={true}
+	>
 		{@const _ = interactivity()}
 		<ModelViewer {scale} {objectPosition} {model} {target} {selectedColor} {materialColors} {onMaterialsLoaded} {enableZoom} />
 	</Canvas>

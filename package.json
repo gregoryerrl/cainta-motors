@@ -14,7 +14,8 @@
 		"lint": "prettier --check . && eslint .",
 		"deploy": "npm run build",
 		"deploy:preview": "npm run build && wrangler pages dev .svelte-kit/output/client",
-		"optimize:models": "node scripts/optimize-models.js"
+		"optimize:models": "node scripts/optimize-models.js",
+		"optimize:images": "node scripts/optimize-images.js"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

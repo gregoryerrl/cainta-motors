@@ -14,27 +14,15 @@
 </section>
 
 <!-- Split Section: 3D Model + Engineering Excellence -->
-<section id="showcase" class="relative h-[150vh] bg-black lg:h-screen">
+<section id="showcase" class="relative h-[120vh] bg-black lg:h-screen">
 	<div class="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
-		<!-- Left: 3D Model (Full height) -->
+		<!-- Left: 3D Model (Full height) - Use smaller Mazda for better performance -->
 		<div class="relative hidden h-full bg-white/6 lg:block">
 			<LazyScene
 				class="h-full w-full"
-				model="/gltf/mercedes-benz_maybach_2022/scene.gltf"
-				scale={0.5}
-				objectPosition={[4, 2, 4]}
-				target={[0, 0, 0]}
-				selectedColor="#000000"
-				priority={true}
-				enableZoom={false}
-			/>
-		</div>
-		<div class="relative h-[40vh] bg-white/6 pt-16 lg:hidden">
-			<LazyScene
-				class="h-full w-full"
-				model="/gltf/mercedes-benz_maybach_2022/scene.gltf"
-				scale={1}
-				objectPosition={[4, 2, 4]}
+				model="/gltf/bugatti_la_voit/scene.gltf"
+				scale={0.02}
+				objectPosition={[8, 2, 8]}
 				target={[0, 0, 0]}
 				selectedColor="#000000"
 				priority={true}
@@ -43,7 +31,7 @@
 		</div>
 
 		<!-- Right: Engineering Excellence (Full height) -->
-		<div class="relative h-[110vh] bg-white/6">
+		<div class="relative h-[120vh] bg-white/6 lg:h-[100vh]">
 			<div class="flex h-full items-center px-8 lg:px-16">
 				<EngineeringExcellence />
 			</div>
@@ -101,7 +89,7 @@
 		<div class="mt-10 flex flex-col gap-6 sm:flex-row sm:justify-center">
 			<a
 				href="/contact"
-				class="border border-red-900 px-10 py-3 text-xs font-light tracking-widest text-white transition-all hover:bg-red-900/20"
+				class="btn-red-fill border border-red-900 px-10 py-3 text-xs font-light tracking-widest text-white"
 			>
 				SCHEDULE TEST DRIVE
 			</a>
