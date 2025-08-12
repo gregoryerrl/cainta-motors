@@ -26,8 +26,9 @@ npm run check:watch
 npm run lint        # Prettier check + ESLint
 npm run format      # Prettier write
 
-# Model optimization (when needed)
+# Model and image optimization (when needed)
 npm run optimize:models  # GLTF model optimization script
+npm run optimize:images  # Image optimization script
 ```
 
 ## Architecture
