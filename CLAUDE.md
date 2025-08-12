@@ -25,6 +25,9 @@ npm run check:watch
 # Linting and formatting
 npm run lint        # Prettier check + ESLint
 npm run format      # Prettier write
+
+# Model optimization (when needed)
+npm run optimize:models  # GLTF model optimization script
 ```
 
 ## Architecture
@@ -79,9 +82,8 @@ npm run format      # Prettier write
 
 ### Available 3D Models
 
-- **Mercedes-Benz Maybach 2022**: `/mercedes-benz_maybach_2022.glb`
-- **Honda City RS**: `/honda_city_rs.glb`
-- **Mazda 3**: `/mazda-3.glb`
+- **Mercedes-Benz Maybach 2022**: `/gltf/mercedes-benz_maybach_2022/scene.gltf`
+- **Mazda 3**: `/gltf/mazda-3/scene.gltf`
 - **Car1 (Porsche Carrera GT)**: `/car1/car1.gltf` - Configurator model with color/accessory support
 - **Car2 (McLaren P1)**: `/car2/car2.gltf` - Configurator model with color/accessory support
 
@@ -95,6 +97,15 @@ npm run format      # Prettier write
 - **Real-time color changing** support via `selectedColor` prop
 - Model-specific material targeting for car body parts only
 - Component chain: Page → `LazyScene` → `Scene` → `ModelViewer`
+
+#### Models Page Integration (VehicleCard with 3D)
+
+- **VehicleCard** component supports both static images and 3D models
+- Models with `has3DModel: true` display interactive 3D viewers instead of images
+- Models with `supportsColorChange: true` show color picker interface
+- **Color Selection**: Click color button to open picker, select colors for real-time preview
+- **Default Color**: All models start with black (`#000000`) as selected color
+- **Material Targeting**: Only Mazda 3 and Maybach support color changes on `/models` page
 
 #### Configurator System (Interactive Customization)
 
@@ -166,17 +177,16 @@ autoRotate={false} // User controls
 
 - **Implementation**: `useGltf()` hook approach (not `<GLTF>` component)
 - **Material Targeting**: Model-specific logic to target car body materials only
-- **Supported Models**: Mercedes Maybach, Mazda 3, Honda City (camera repositioned)
+- **Supported Models**: Mercedes Maybach, Mazda 3
 - **Technical**: `material.color = new THREE.Color(selectedColor)` with `needsUpdate = true`
+- **Default Color**: Black (`#000000`) is the default selected color for all models
 
 ```javascript
 // Model-specific material targeting logic
 if (model.includes('maybach')) {
-  shouldApplyColor = materialName === 'car_chrome';
+  shouldApplyColor = materialName === 'Car_Paint_With_Flakes';
 } else if (model.includes('mazda')) {
-  shouldApplyColor = materialName.includes('16'); // material_16
-} else if (model.includes('honda')) {
-  shouldApplyColor = materialName === 'material'; // To be verified
+  shouldApplyColor = materialName === 'material';
 }
 ```
 
@@ -190,7 +200,7 @@ if (model.includes('maybach')) {
 
 - **Debug Route**: `/gregoryerrl` for development material identification
 - **Auto-highlighting**: Cycles through materials with red coloring (500ms intervals)
-- **Material Discovery**: Used to identify `car_chrome` (Maybach), `material_16` (Mazda)
+- **Material Discovery**: Used to identify `Car_Paint_With_Flakes` (Maybach), `material` (Mazda)
 - **Console Logging**: `🔴 HIGHLIGHTING: material_name` for identification
 
 #### Accessory System
@@ -228,7 +238,7 @@ if (model.includes('maybach')) {
 #### UI Components
 
 - **AccordionSection** (`/src/lib/components/ui/`): Collapsible sections with smooth animations
-- **VehicleCard** (`/src/lib/components/ui/`): Vehicle display cards with pricing
+- **VehicleCard** (`/src/lib/components/ui/`): Vehicle display cards with pricing and 3D model integration
 - **VideoHero** (`/src/lib/components/home/`): Hero section with video background
 - **SmoothScrollManager** (`/src/lib/components/`): Lenis smooth scrolling integration
 - **EngineeringExcellence** (`/src/lib/components/home/`): 100vh split section with 3D model
@@ -244,8 +254,8 @@ if (model.includes('maybach')) {
 
 ### Key Pages
 
-- **Homepage** (`/`): Video hero, 3D model showcase, feature sections
-- **Models** (`/models`): Grid of available vehicles with filters
+- **Homepage** (`/`): Video hero, 3D model showcase (Maybach in black), feature sections
+- **Models** (`/models`): Grid of available vehicles with filters and 3D model integration with color selection
 - **Model Detail** (`/models/[slug]`): Individual vehicle with 3D viewer, gallery, specs
 - **Configurator** (`/configurator`): Interactive car customization with real-time 3D preview, color changes, and accessory selection
 - **About** (`/about`): Company information with premium layout
@@ -296,6 +306,8 @@ interface Vehicle {
 	modelScale?: number;
 	modelPosition?: [number, number, number];
 	modelTarget?: [number, number, number];
+	has3DModel?: boolean;
+	supportsColorChange?: boolean;
 	features: string[];
 	specifications: {
 		engine: string;
@@ -322,12 +334,12 @@ interface Vehicle {
 
 ## Current Vehicle Inventory
 
-### Regular Models (3D Viewing with Color Changing)
+### Regular Models (/models page)
 
-1. **Honda City RS** - Sedan with 3D model and color changing (material TBD)
+1. **Honda City RS** - Sedan (no 3D model)
 2. **Toyota Vios GR-S** - Sedan (no 3D model)
-3. **Mazda 3 Premium** - Sedan with 3D model and color changing (`material_16`)
-4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model and color changing (`car_chrome`)
+3. **Mazda 3 Premium** - Sedan with 3D model and color changing (`material`)
+4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model and color changing (`Car_Paint_With_Flakes`)
 
 ### Configurator Models (Interactive Customization)
 

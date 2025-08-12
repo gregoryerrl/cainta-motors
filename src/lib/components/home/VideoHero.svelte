@@ -1,17 +1,6 @@
 <script lang="ts">
-	import { ChevronDown } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { onMount, getContext } from 'svelte';
-
-	// We'll get Lenis instance from context or fallback to our utility
-	function handleScrollToNext() {
-		// Try to find the next section element
-		const showcaseSection = document.getElementById('showcase');
-		if (showcaseSection) {
-			// Use native smooth scroll as fallback, Lenis will override this
-			showcaseSection.scrollIntoView({ behavior: 'smooth' });
-		}
-	}
 
 	let mounted = $state(false);
 	let videoRef = $state<HTMLVideoElement | null>(null);
@@ -75,7 +64,7 @@
 </script>
 
 <section class="relative w-full overflow-hidden bg-black" style="height: calc(100vh - 5rem);">
-	<!-- Video Background with Fallback -->
+	<!-- Video Background with Mobile Optimization -->
 	{#if typeof window !== 'undefined'}
 		<video
 			bind:this={videoRef}
@@ -84,11 +73,15 @@
 			muted
 			loop
 			playsinline
+			preload="metadata"
 			onloadstart={handleVideoLoadStart}
 			onloadeddata={handleVideoLoaded}
 			oncanplaythrough={handleVideoLoaded}
 			onerror={handleVideoError}
 		>
+			<!-- Smaller video for mobile devices -->
+			<source src="/hero_video_mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
+			<!-- Full quality for desktop -->
 			<source src="/hero_video.mp4" type="video/mp4" />
 		</video>
 	{/if}
@@ -106,10 +99,10 @@
 	>
 		{#if mounted}
 			<div transition:fade={{ delay: 500, duration: 1200 }}>
-				<h1 class="mb-6 text-6xl font-thin text-white md:text-7xl lg:text-8xl">
+				<h1 class="mb-6 text-4xl font-thin text-white sm:text-6xl md:text-7xl lg:text-8xl">
 					<span class="block tracking-[0.3em]">CAINTA MOTORS</span>
 					<span
-						class="block text-3xl font-thin tracking-[0.2em] text-gray-400 md:text-4xl lg:text-5xl"
+						class="block text-xl font-thin tracking-[0.2em] text-gray-400 sm:text-3xl md:text-4xl lg:text-5xl"
 					>
 						Premium Automotive Excellence
 					</span>

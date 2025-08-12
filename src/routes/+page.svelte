@@ -33,6 +33,7 @@
 				objectPosition={[4, 2, 4]}
 				model="/gltf/mercedes-benz_maybach_2022/scene.gltf"
 				selectedColor="#000000"
+				priority={false}
 			/>
 		</div>
 
@@ -66,7 +67,7 @@
 
 		<div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
 			{#each vehicles.slice(0, 3) as vehicle}
-				<VehicleCard {vehicle} />
+				<VehicleCard {vehicle} forceDisable3D={true} />
 			{/each}
 		</div>
 

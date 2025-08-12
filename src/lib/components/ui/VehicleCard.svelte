@@ -2,11 +2,18 @@
 	import type { Vehicle } from '$lib/data/vehicles';
 	import { ArrowRight } from 'lucide-svelte';
 	import LazyScene from '$lib/components/three/LazyScene.svelte';
+	import { onMount } from 'svelte';
 
-	let { vehicle }: { vehicle: Vehicle } = $props();
+	interface Props {
+		vehicle: Vehicle;
+		forceDisable3D?: boolean;
+	}
+
+	let { vehicle, forceDisable3D = false }: Props = $props();
 
 	let selectedColor = $state(vehicle.colors.find(c => c.hex === '#000000') || vehicle.colors.find(c => c.hex.toLowerCase().includes('black')) || vehicle.colors[0]);
 	let showColorPicker = $state(false);
+	let isMobile = $state(false);
 
 	const formatPrice = (price: number) => {
 		return new Intl.NumberFormat('en-PH', {
@@ -15,13 +22,28 @@
 			minimumFractionDigits: 0
 		}).format(price);
 	};
+
+	onMount(() => {
+		// Detect mobile devices for performance optimization
+		isMobile = window.innerWidth < 768;
+		
+		const handleResize = () => {
+			isMobile = window.innerWidth < 768;
+		};
+		
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	});
+
+	// Show 3D model only if not mobile (or not forced disabled) and vehicle supports it
+	let show3DModel = $derived(!forceDisable3D && !isMobile && vehicle.has3DModel && vehicle.modelPath);
 </script>
 
 <article
 	class="group relative border border-gray-800 bg-black transition-all hover:border-gray-600"
 >
 	<div class="relative aspect-[4/3] overflow-hidden">
-		{#if vehicle.has3DModel && vehicle.modelPath}
+		{#if show3DModel}
 			<!-- 3D Model Viewer -->
 			<div class="h-full w-full bg-black">
 				<LazyScene
@@ -39,6 +61,7 @@
 				src={vehicle.image}
 				alt="{vehicle.brand} {vehicle.model} {vehicle.variant}"
 				class="h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-80"
+				loading="lazy"
 			/>
 		{/if}
 
@@ -79,8 +102,8 @@
 			{/if}
 		</div>
 
-		<!-- Color Picker for supported models -->
-		{#if vehicle.supportsColorChange && vehicle.colors.length > 0}
+		<!-- Color Picker for supported models (only show when 3D model is active) -->
+		{#if show3DModel && vehicle.supportsColorChange && vehicle.colors.length > 0}
 			<div class="absolute bottom-3 left-3">
 				<button
 					onclick={() => (showColorPicker = !showColorPicker)}
