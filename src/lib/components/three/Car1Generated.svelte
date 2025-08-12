@@ -8,98 +8,69 @@ Title: Porsche Carrera GT 2003 Street
 -->
 
 <script>
-  import { T } from '@threlte/core'
-  import { useGltf } from '@threlte/extras'
+	import { T } from '@threlte/core';
+	import { useGltf } from '@threlte/extras';
 
-  let { fallback, error, children, ref = $bindable(), selectedColor = '#ffffff', accessory = 0, ...props } = $props()
+	let {
+		fallback,
+		error,
+		children,
+		ref = $bindable(),
+		selectedColor = '#ffffff',
+		accessory = 0,
+		...props
+	} = $props();
 
-  const gltf = useGltf('/car1/car1.gltf')
+	const gltf = useGltf('/car1/car1.gltf');
 </script>
 
-<T.Group
-  bind:ref
-  dispose={false}
-  {...props}
->
-  {#await gltf}
-    {@render fallback?.()}
-  {:then gltf}
-    <T.Group
-      position={[0, -0.01, 0]}
-      rotation={[3.13, 0, Math.PI]}
-    >
-      <T.Mesh
-        geometry={gltf.nodes.Object_4.geometry}
-        material={gltf.materials.Main_Paint}
-        material.color={selectedColor}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_5.geometry}
-        material={gltf.materials.Black}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_6.geometry}
-        material={gltf.materials.Black}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_7.geometry}
-        material={gltf.materials.Chrome}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_8.geometry}
-        material={gltf.materials.Tail_Lights}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_9.geometry}
-        material={gltf.materials.Glass}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_10.geometry}
-        material={gltf.materials.Globes}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_11.geometry}
-        material={gltf.materials.Mirrors}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_12.geometry}
-        material={gltf.materials.material}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_13.geometry}
-        material={gltf.materials.Gold}
-      />
-    </T.Group>
-    <T.Group
-      position={[0, 0.05, -0.08]}
-      rotation={[-Math.PI, 0, -Math.PI]}
-      scale={[0.61, 0.65, 0.65]}
-    >
-      <T.Mesh
-        geometry={gltf.nodes.Object_15.geometry}
-        material={gltf.materials.Chrome}
-      />
-      <T.Mesh
-        geometry={gltf.nodes.Object_16.geometry}
-        material={gltf.materials.Gold}
-        visible={accessory === 1}
-      />
-    </T.Group>
-    <T.Mesh
-      geometry={gltf.nodes.Object_18.geometry}
-      material={gltf.materials.Rims}
-      position={[0, 0.05, 0.02]}
-      scale={[0.61, 0.65, 0.65]}
-    />
-    <T.Mesh
-      geometry={gltf.nodes.Object_20.geometry}
-      material={gltf.materials.Tyres}
-      position={[0, 0.05, 0.02]}
-      scale={[0.61, 0.65, 0.65]}
-    />
-  {:catch err}
-    {@render error?.({ error: err })}
-  {/await}
+<T.Group bind:ref dispose={false} {...props}>
+	{#await gltf}
+		{@render fallback?.()}
+	{:then gltf}
+		<T.Group position={[0, -0.01, 0]} rotation={[3.13, 0, Math.PI]}>
+			<T.Mesh
+				geometry={gltf.nodes.Object_4.geometry}
+				material={gltf.materials.Main_Paint}
+				material.color={selectedColor}
+			/>
+			<T.Mesh geometry={gltf.nodes.Object_5.geometry} material={gltf.materials.Black} />
+			<T.Mesh geometry={gltf.nodes.Object_6.geometry} material={gltf.materials.Black} />
+			<T.Mesh geometry={gltf.nodes.Object_7.geometry} material={gltf.materials.Chrome} />
+			<T.Mesh geometry={gltf.nodes.Object_8.geometry} material={gltf.materials.Tail_Lights} />
+			<T.Mesh geometry={gltf.nodes.Object_9.geometry} material={gltf.materials.Glass} />
+			<T.Mesh geometry={gltf.nodes.Object_10.geometry} material={gltf.materials.Globes} />
+			<T.Mesh geometry={gltf.nodes.Object_11.geometry} material={gltf.materials.Mirrors} />
+			<T.Mesh geometry={gltf.nodes.Object_12.geometry} material={gltf.materials.material} />
+			<T.Mesh geometry={gltf.nodes.Object_13.geometry} material={gltf.materials.Gold} />
+		</T.Group>
+		<T.Group
+			position={[0, 0.05, -0.08]}
+			rotation={[-Math.PI, 0, -Math.PI]}
+			scale={[0.61, 0.65, 0.65]}
+		>
+			<T.Mesh geometry={gltf.nodes.Object_15.geometry} material={gltf.materials.Chrome} />
+			<T.Mesh
+				geometry={gltf.nodes.Object_16.geometry}
+				material={gltf.materials.Gold}
+				visible={accessory === 1}
+			/>
+		</T.Group>
+		<T.Mesh
+			geometry={gltf.nodes.Object_18.geometry}
+			material={gltf.materials.Rims}
+			position={[0, 0.05, 0.02]}
+			scale={[0.61, 0.65, 0.65]}
+		/>
+		<T.Mesh
+			geometry={gltf.nodes.Object_20.geometry}
+			material={gltf.materials.Tyres}
+			position={[0, 0.05, 0.02]}
+			scale={[0.61, 0.65, 0.65]}
+		/>
+	{:catch err}
+		{@render error?.({ error: err })}
+	{/await}
 
-  {@render children?.({ ref })}
+	{@render children?.({ ref })}
 </T.Group>

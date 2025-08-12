@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Car1Generated from './Car1Generated.svelte';
 	import Car2Generated from './Car2Generated.svelte';
-	
-	let { 
+
+	let {
 		selectedCar = 'car1',
 		selectedColor = '#0000FF',
 		accessory = 0
-	}: { 
+	}: {
 		selectedCar: string;
 		selectedColor: string;
 		accessory: number;

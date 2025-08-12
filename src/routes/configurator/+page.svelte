@@ -17,15 +17,15 @@
 
 	// Car options
 	const carOptions = [
-		{ id: 'car1', name: 'Sports Car', model: '/car1/car1.gltf', price: 10000000 },
-		{ id: 'car2', name: 'Luxury Sedan', model: '/car2/car2.gltf', price: 15000000 }
+		{ id: 'car1', name: 'Porsche Carrera GT', model: '/car1/car1.gltf', price: 10000000 },
+		{ id: 'car2', name: 'McLaren P1', model: '/car2/car2.gltf', price: 15000000 }
 	];
 
 	// State management
 	let selectedCar = $state('car1');
 	let selectedColor = $state(colors[2]); // Default to blue
 	let accessory = $state(0);
-	let isLoading = $state(true);
+	let isLoading = $state(false);
 	let loadingKey = $state(0);
 
 	// Accordion state management
@@ -40,15 +40,6 @@
 		return cost;
 	});
 
-	// Initialize first load
-	$effect(() => {
-		if (loadingKey === 0) {
-			setTimeout(() => {
-				isLoading = false;
-			}, 2000);
-		}
-	});
-
 	// Handle car selection
 	function selectCarModel(carId: string) {
 		if (selectedCar === carId) return;
@@ -57,9 +48,12 @@
 		isLoading = true;
 		loadingKey++;
 
-		setTimeout(() => {
-			isLoading = false;
-		}, 2000);
+		// Quick loading state for model switch
+		requestAnimationFrame(() => {
+			setTimeout(() => {
+				isLoading = false;
+			}, 300);
+		});
 	}
 
 	// Get current car info

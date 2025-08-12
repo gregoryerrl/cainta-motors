@@ -38,8 +38,7 @@
 		const touch1 = touches[0];
 		const touch2 = touches[1];
 		return Math.sqrt(
-			Math.pow(touch2.clientX - touch1.clientX, 2) + 
-			Math.pow(touch2.clientY - touch1.clientY, 2)
+			Math.pow(touch2.clientX - touch1.clientX, 2) + Math.pow(touch2.clientY - touch1.clientY, 2)
 		);
 	}
 
@@ -57,18 +56,18 @@
 		if (event.touches.length === 2) {
 			event.preventDefault();
 			event.stopPropagation();
-			
+
 			const currentDistance = getTouchDistance(event.touches);
 			if (initialTouchDistance > 0) {
 				const scale = currentDistance / lastTouchDistance;
-				
+
 				// Create a synthetic wheel event for OrbitControls
 				const syntheticEvent = new WheelEvent('wheel', {
 					deltaY: scale > 1 ? -100 : 100, // Negative for zoom in, positive for zoom out
 					bubbles: true,
 					cancelable: true
 				});
-				
+
 				containerElement?.dispatchEvent(syntheticEvent);
 				lastTouchDistance = currentDistance;
 			}
@@ -87,12 +86,12 @@
 		if (containerElement) {
 			// Desktop wheel events
 			containerElement.addEventListener('wheel', handleWheel, { passive: false });
-			
+
 			// Mobile touch events for pinch zoom
 			containerElement.addEventListener('touchstart', handleTouchStart, { passive: false });
 			containerElement.addEventListener('touchmove', handleTouchMove, { passive: false });
 			containerElement.addEventListener('touchend', handleTouchEnd, { passive: false });
-			
+
 			return () => {
 				containerElement.removeEventListener('wheel', handleWheel);
 				containerElement.removeEventListener('touchstart', handleTouchStart);
@@ -103,15 +102,22 @@
 	});
 </script>
 
-<div 
+<div
 	bind:this={containerElement}
-	class="{className} relative" 
+	class="{className} relative"
 	style="touch-action: none;"
 	role="application"
 >
 	<Canvas>
 		{@const _ = interactivity()}
-		<ConfiguratorModelViewer {scale} {objectPosition} {model} {target} {selectedColor} {accessory} />
+		<ConfiguratorModelViewer
+			{scale}
+			{objectPosition}
+			{model}
+			{target}
+			{selectedColor}
+			{accessory}
+		/>
 	</Canvas>
 </div>
 

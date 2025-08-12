@@ -13,6 +13,8 @@ export interface Vehicle {
 	modelScale?: number;
 	modelPosition?: [number, number, number];
 	modelTarget?: [number, number, number];
+	has3DModel?: boolean;
+	supportsColorChange?: boolean;
 	features: string[];
 	specifications: {
 		engine: string;
@@ -54,10 +56,8 @@ export const vehicles: Vehicle[] = [
 			'/honda/honda4.jpg',
 			'/honda/honda5.jpg'
 		],
-		modelPath: '/honda_city_rs.glb',
-		modelScale: 3.8,
-		modelPosition: [4, 1, 4] as [number, number, number],
-		modelTarget: [0, 0, 2.5] as [number, number, number],
+		has3DModel: false,
+		supportsColorChange: false,
 		features: [
 			'Honda SENSING',
 			'LED Headlights with DRL',
@@ -103,6 +103,8 @@ export const vehicles: Vehicle[] = [
 		category: 'sedan',
 		image: '/vios/vios1.jpg',
 		images: ['/vios/vios2.jpg'],
+		has3DModel: false,
+		supportsColorChange: false,
 		features: [
 			'Toyota Safety Sense',
 			'LED Headlights',
@@ -142,10 +144,12 @@ export const vehicles: Vehicle[] = [
 		category: 'sedan',
 		image: '/mazda/mazda1.jpg',
 		images: ['/mazda/mazda2.jpg'],
-		modelPath: '/mazda-3.glb',
-		modelScale: 0.1,
-		modelPosition: [30, 20, 30] as [number, number, number],
+		modelPath: '/gltf/mazda-3/scene.gltf',
+		modelScale: 0.02,
+		modelPosition: [4, 2, 4] as [number, number, number],
 		modelTarget: [0, 0, 0] as [number, number, number],
+		has3DModel: true,
+		supportsColorChange: true,
 		features: [
 			'i-Activsense Safety Features',
 			'Bose Premium Audio',
@@ -185,10 +189,12 @@ export const vehicles: Vehicle[] = [
 		category: 'luxury',
 		image: '/maybach/maybach1.jpg',
 		images: ['/maybach/maybach1.jpg', '/maybach/maybach2.jpg'],
-		modelPath: '/mercedes-benz_maybach_2022.glb',
-		modelScale: 1,
+		modelPath: '/gltf/mercedes-benz_maybach_2022/scene.gltf',
+		modelScale: 0.5,
 		modelPosition: [4, 2, 4] as [number, number, number],
 		modelTarget: [0, 0, 0] as [number, number, number],
+		has3DModel: true,
+		supportsColorChange: true,
 		features: [
 			'MBUX Rear Tablet',
 			'Executive Rear Seat Package Plus',

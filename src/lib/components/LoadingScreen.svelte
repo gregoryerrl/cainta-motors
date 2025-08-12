@@ -21,13 +21,13 @@
 	// Reactive values from context
 	$effect(() => {
 		if (loadingContext && !loadingContext.isLoading()) {
-			// Add a slight delay before hiding the screen for smooth transition
+			// Minimal delay for smooth fade transition
 			setTimeout(() => {
 				showScreen = false;
 				// Re-enable scrolling when loading screen is hidden
 				document.body.style.overflow = '';
 				document.body.style.height = '';
-			}, 500);
+			}, 200);
 		}
 	});
 </script>
@@ -81,6 +81,5 @@
 				style="animation-delay: 0.4s;"
 			></div>
 		</div>
-
 	</div>
 {/if}

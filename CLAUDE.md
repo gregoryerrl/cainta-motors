@@ -82,37 +82,128 @@ npm run format      # Prettier write
 - **Mercedes-Benz Maybach 2022**: `/mercedes-benz_maybach_2022.glb`
 - **Honda City RS**: `/honda_city_rs.glb`
 - **Mazda 3**: `/mazda-3.glb`
+- **Car1 (Porsche Carrera GT)**: `/car1/car1.gltf` - Configurator model with color/accessory support
+- **Car2 (McLaren P1)**: `/car2/car2.gltf` - Configurator model with color/accessory support
 
-### Model Configuration
+### Three 3D Systems
 
-Each vehicle in `/src/lib/data/vehicles.ts` includes:
-- `modelPath`: Path to GLB file
-- `modelScale`: Scale factor for proper sizing
-- `modelPosition`: Camera position [x, y, z]
-- `modelTarget`: OrbitControls target point [x, y, z]
+#### General Model Viewing (Homepage, Model Pages)
+
+- Uses `Scene.svelte` → `ModelViewer.svelte` → `LazyScene.svelte`
+- Loads any GLTF model via `model` prop with `useGltf()` hook approach
+- Auto-rotation enabled, zoom disabled
+- **Real-time color changing** support via `selectedColor` prop
+- Model-specific material targeting for car body parts only
+- Component chain: Page → `LazyScene` → `Scene` → `ModelViewer`
+
+#### Configurator System (Interactive Customization)
+
+- Uses `ConfiguratorScene.svelte` → `ConfiguratorModelViewer.svelte` → `CarSelector.svelte`
+- Car1/Car2 generated components with `@threlte/gltf`
+- Real-time color changes and accessory visibility
+- User-controlled interaction (rotation + zoom)
+
+#### Debug Material System (`/gregoryerrl`)
+
+- Auto-highlighting tool to identify material names for development
+- Cycles through all materials with red highlighting (500ms intervals)
+- Used to determine which materials represent car body vs interior/chrome/glass
+- Essential for configuring model-specific material targeting logic
 
 ### Scene Component Props
 
 ```typescript
-<Scene 
+// General viewing (Homepage, Model pages) - with color changing
+<LazyScene
   model={vehicle.modelPath}
   scale={vehicle.modelScale}
   objectPosition={vehicle.modelPosition}
   target={vehicle.modelTarget}
+  selectedColor={selectedColor.hex}
+  priority={true}
+/>
+
+// Configurator (Interactive customization)
+<ConfiguratorScene
+  model={carModel}
+  scale={1}
+  objectPosition={[4, 2, 4]}
+  target={[0, 0, 0]}
+  selectedColor={colorHex}
+  accessory={accessoryState}
+/>
+
+// Debug material identification
+<LazyScene
+  materialColors={materialColors}
+  onMaterialsLoaded={setAvailableMaterials}
+  priority={true}
 />
 ```
 
 ### Controls Configuration
 
 ```typescript
-// OrbitControls settings
-enablePan={false} 
-enableZoom={false} 
+// General viewing - Auto-rotate showcase
+enablePan={false}
+enableZoom={false}
 enableDamping={true}
-autoRotate={true} 
+autoRotate={true}
 autoRotateSpeed={1.0}
-target={[x, y, z]} // Dynamic based on model
+
+// Configurator - User interaction
+enablePan={false}
+enableZoom={true}
+zoomSpeed={0.6}
+minDistance={2}
+maxDistance={15}
+autoRotate={false} // User controls
 ```
+
+### Color Changing Implementation
+
+#### Model Detail Pages (Real-time Color Preview)
+
+- **Implementation**: `useGltf()` hook approach (not `<GLTF>` component)
+- **Material Targeting**: Model-specific logic to target car body materials only
+- **Supported Models**: Mercedes Maybach, Mazda 3, Honda City (camera repositioned)
+- **Technical**: `material.color = new THREE.Color(selectedColor)` with `needsUpdate = true`
+
+```javascript
+// Model-specific material targeting logic
+if (model.includes('maybach')) {
+  shouldApplyColor = materialName === 'car_chrome';
+} else if (model.includes('mazda')) {
+  shouldApplyColor = materialName.includes('16'); // material_16
+} else if (model.includes('honda')) {
+  shouldApplyColor = materialName === 'material'; // To be verified
+}
+```
+
+#### Configurator Features (Interactive Customization)
+
+- **Car1**: `Main_Paint` material with `material.color={selectedColor}`
+- **Car2**: Multiple `Carpaint` materials with synchronized color binding
+- Real-time color preview with 8 available colors
+
+#### Debug Material Identification
+
+- **Debug Route**: `/gregoryerrl` for development material identification
+- **Auto-highlighting**: Cycles through materials with red coloring (500ms intervals)
+- **Material Discovery**: Used to identify `car_chrome` (Maybach), `material_16` (Mazda)
+- **Console Logging**: `🔴 HIGHLIGHTING: material_name` for identification
+
+#### Accessory System
+
+- **Car1**: Gold accent parts `visible={accessory === 1}` (Performance Package)
+- **Car2**: Brake calipers on all 4 wheels `visible={accessory === 1}` (Performance Package)
+- Instant visibility toggle based on package selection
+
+#### Interaction Controls
+
+- **Desktop**: Mouse wheel zoom, drag rotation, scroll prevention
+- **Mobile**: Pinch zoom, touch rotation, touch event prevention
+- **Cross-platform**: Smooth damped controls with luxury feel
 
 ### Lighting Setup
 
@@ -124,10 +215,21 @@ target={[x, y, z]} // Dynamic based on model
 
 ### Key Components
 
-- **ModelViewer** (`/src/lib/components/three/`): Main 3D viewer with Threlte
-- **Scene** (`/src/lib/components/three/`): Canvas wrapper with interaction handling
-- **VideoHero** (`/src/lib/components/home/`): Hero section with video background
+#### 3D Components
+
+- **Scene** (`/src/lib/components/three/`): General purpose 3D canvas wrapper
+- **ModelViewer** (`/src/lib/components/three/`): General GLTF model viewer with auto-rotation
+- **ConfiguratorScene** (`/src/lib/components/three/`): Interactive 3D canvas for configurator
+- **ConfiguratorModelViewer** (`/src/lib/components/three/`): User-controlled 3D viewer with zoom
+- **CarSelector** (`/src/lib/components/three/`): Switches between Car1/Car2 generated components
+- **Car1Generated** (`/src/lib/components/three/`): Porsche Carrera GT with color/accessory binding
+- **Car2Generated** (`/src/lib/components/three/`): McLaren P1 with color/accessory binding
+
+#### UI Components
+
+- **AccordionSection** (`/src/lib/components/ui/`): Collapsible sections with smooth animations
 - **VehicleCard** (`/src/lib/components/ui/`): Vehicle display cards with pricing
+- **VideoHero** (`/src/lib/components/home/`): Hero section with video background
 - **SmoothScrollManager** (`/src/lib/components/`): Lenis smooth scrolling integration
 - **EngineeringExcellence** (`/src/lib/components/home/`): 100vh split section with 3D model
 
@@ -145,7 +247,7 @@ target={[x, y, z]} // Dynamic based on model
 - **Homepage** (`/`): Video hero, 3D model showcase, feature sections
 - **Models** (`/models`): Grid of available vehicles with filters
 - **Model Detail** (`/models/[slug]`): Individual vehicle with 3D viewer, gallery, specs
-- **Configurator** (`/configurator`): Model selection with 3D preview
+- **Configurator** (`/configurator`): Interactive car customization with real-time 3D preview, color changes, and accessory selection
 - **About** (`/about`): Company information with premium layout
 - **Contact** (`/contact`): Contact form and dealership information
 
@@ -180,59 +282,89 @@ target={[x, y, z]} // Dynamic based on model
 
 ```typescript
 interface Vehicle {
-  id: string;
-  slug: string;
-  brand: string;
-  model: string;
-  variant: string;
-  price: number;
-  year: number;
-  category: 'sedan' | 'suv' | 'hatchback' | 'sports' | 'luxury';
-  image: string;
-  images: string[];
-  modelPath?: string;
-  modelScale?: number;
-  modelPosition?: [number, number, number];
-  modelTarget?: [number, number, number];
-  features: string[];
-  specifications: {
-    engine: string;
-    power: string;
-    torque: string;
-    transmission: string;
-    drivetrain: string;
-    fuelType: string;
-    fuelCapacity: string;
-    seatingCapacity: number;
-    dimensions: {
-      length: string;
-      width: string;
-      height: string;
-      wheelbase: string;
-    };
-  };
-  colors: {
-    name: string;
-    hex: string;
-  }[];
+	id: string;
+	slug: string;
+	brand: string;
+	model: string;
+	variant: string;
+	price: number;
+	year: number;
+	category: 'sedan' | 'suv' | 'hatchback' | 'sports' | 'luxury';
+	image: string;
+	images: string[];
+	modelPath?: string;
+	modelScale?: number;
+	modelPosition?: [number, number, number];
+	modelTarget?: [number, number, number];
+	features: string[];
+	specifications: {
+		engine: string;
+		power: string;
+		torque: string;
+		transmission: string;
+		drivetrain: string;
+		fuelType: string;
+		fuelCapacity: string;
+		seatingCapacity: number;
+		dimensions: {
+			length: string;
+			width: string;
+			height: string;
+			wheelbase: string;
+		};
+	};
+	colors: {
+		name: string;
+		hex: string;
+	}[];
 }
 ```
 
 ## Current Vehicle Inventory
 
-1. **Honda City RS** - Sedan with 3D model
+### Regular Models (3D Viewing with Color Changing)
+
+1. **Honda City RS** - Sedan with 3D model and color changing (material TBD)
 2. **Toyota Vios GR-S** - Sedan (no 3D model)
-3. **Mazda 3 Premium** - Sedan with 3D model
-4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model
+3. **Mazda 3 Premium** - Sedan with 3D model and color changing (`material_16`)
+4. **Mercedes-Benz Maybach S-Class** - Luxury with 3D model and color changing (`car_chrome`)
+
+### Configurator Models (Interactive Customization)
+
+1. **Car1 (Porsche Carrera GT)** - Sports Car (₱10,000,000)
+   - 8 color options with real-time preview
+   - Performance Package: Gold accent parts (+₱1,000,000)
+   - Generated with `@threlte/gltf` from `/static/car1/car1.gltf`
+
+2. **Car2 (McLaren P1)** - Luxury Sedan (₱15,000,000)
+   - 8 color options with synchronized paint materials
+   - Performance Package: 4-wheel brake calipers (+₱1,000,000)
+   - Generated with `@threlte/gltf` from `/static/car2/car2.gltf`
 
 ## Performance Considerations
 
+### 3D Optimization
+
 - 3D models optimized with proper scale factors
-- Auto-rotation pauses on user interaction (3 second resume delay)
+- General models: Auto-rotation pauses on user interaction (3 second resume delay)
+- Configurator models: User-controlled interaction without auto-rotation
+- Studio lighting setup optimized for automotive showcase
+- Loading states prevent layout shift
+
+### Interaction Optimization
+
+- **Desktop**: Wheel event prevention stops page scroll conflicts during 3D zoom
+- **Mobile**: Touch event prevention stops page zoom/scroll during 3D interaction
+- **Cross-platform**: Pinch zoom converted to synthetic wheel events for OrbitControls
+- Smooth damped controls with luxury feel (`dampingFactor: 0.05`)
+
+### UI Performance
+
+- Accordion sections reduce initial render load
+- Sticky summary section with optimized backdrop blur
 - Video autoplay with fallback gradient background
 - Lenis smooth scrolling with `{ autoRaf: true }` configuration
 - Long-term caching for static assets via Vercel headers
-- Loading states prevent layout shift
 
 ## Deployment
 

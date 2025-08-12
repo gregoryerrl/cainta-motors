@@ -8,14 +8,26 @@
 		scale = 0.5,
 		objectPosition = [0, 0, 0],
 		model = '',
-		target = [0, 0, 0]
+		target = [0, 0, 0],
+		selectedColor = '#ffffff',
+		materialColors = {},
+		onMaterialsLoaded
+	}: {
+		class?: string;
+		scale?: number;
+		objectPosition?: [number, number, number];
+		model?: string;
+		target?: [number, number, number];
+		selectedColor?: string;
+		materialColors?: Record<string, string>;
+		onMaterialsLoaded?: (materials: string[]) => void;
 	} = $props();
 </script>
 
 <div class="{className} relative" style="touch-action: none;">
 	<Canvas>
 		{@const _ = interactivity()}
-		<ModelViewer {scale} {objectPosition} {model} {target} />
+		<ModelViewer {scale} {objectPosition} {model} {target} {selectedColor} {materialColors} {onMaterialsLoaded} />
 	</Canvas>
 </div>
 

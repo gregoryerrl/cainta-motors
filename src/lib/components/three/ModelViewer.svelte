@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { T } from '@threlte/core';
-	import { OrbitControls, GLTF } from '@threlte/extras';
+	import { OrbitControls, useGltf } from '@threlte/extras';
 	import { getContext, onMount } from 'svelte';
 	import * as THREE from 'three';
 
@@ -8,10 +8,20 @@
 		scale = 0.5,
 		objectPosition = [0, 0, 0],
 		model = '/mercedes-benz_maybach_2022.glb',
-		target = [0, 0, 0]
-	}: { scale?: number; objectPosition?: any; model?: string; target?: any } = $props();
+		target = [0, 0, 0],
+		selectedColor = '#ffffff',
+		materialColors = {},
+		onMaterialsLoaded
+	}: { 
+		scale?: number; 
+		objectPosition?: any; 
+		model?: string; 
+		target?: any; 
+		selectedColor?: string;
+		materialColors?: Record<string, string>;
+		onMaterialsLoaded?: (materials: string[]) => void;
+	} = $props();
 	let centerOffset = $state({ x: 0, y: 0, z: 0 });
-	let modelCenter = $state({ x: 0, y: 0, z: 0 });
 	let autoRotate = $state(true);
 
 	// Get loading context to report 3D model loading status
@@ -31,67 +41,141 @@
 		}
 	});
 
-	// Update loading status when model starts loading
-	function handleProgress() {
-		if (loadingContext) {
-			loadingContext.updateAsset('3d-model', 'loading');
+
+	// Use the same approach as the working configurator
+	const gltf = useGltf(model);
+
+	// Store loaded GLTF for color changes
+	let loadedGltf: any = null;
+
+	// Store available materials for debug mode
+	let availableMaterials: string[] = [];
+
+	// Load GLTF initially
+	$effect(() => {
+		gltf.then((gltfData) => {
+			loadedGltf = gltfData;
+			
+			// Extract material names for debug mode
+			const materials: string[] = [];
+			gltfData.scene.traverse((child: any) => {
+				if (child.isMesh && child.material && child.material.name) {
+					if (!materials.includes(child.material.name)) {
+						materials.push(child.material.name);
+					}
+				}
+			});
+			availableMaterials = materials.sort();
+			
+			// Report materials to debug page
+			if (onMaterialsLoaded) {
+				onMaterialsLoaded(availableMaterials);
+			}
+			
+			if (gltfData) {
+				applyColors(gltfData.scene);
+			}
+		}).catch((error) => {
+			console.error('GLTF loading failed:', error);
+		});
+	});
+
+	// Apply colors when selectedColor or materialColors change
+	$effect(() => {
+		console.log('ModelViewer effect triggered - loadedGltf:', !!loadedGltf, 'materialColors keys:', Object.keys(materialColors), 'selectedColor:', selectedColor);
+		if (loadedGltf) {
+			applyColors(loadedGltf.scene);
 		}
-	}
+	});
 
-	// Handle loading errors
-	function handleError() {
-		if (loadingContext) {
-			loadingContext.updateAsset('3d-model', 'error');
+	// New unified color application function
+	function applyColors(scene: any) {
+		const isDebugMode = Object.keys(materialColors).length > 0;
+		if (isDebugMode) {
+			console.log('Debug mode - materialColors:', materialColors);
 		}
-	}
-
-	// Center the model when it loads - force center for vehicle
-	function handleLoad(e: any) {
-		const { scene } = e.detail;
-
-		// Calculate bounding box
-		const box = new THREE.Box3().setFromObject(scene);
-		const center = box.getCenter(new THREE.Vector3());
-		const size = box.getSize(new THREE.Vector3());
-		const min = box.min;
-		const max = box.max;
-
-		// For a car, we want to center it differently:
-		// X: true geometric center (left-right)
-		// Y: keep it on ground level (don't center vertically)
-		// Z: center of wheelbase (front-rear center)
-		const vehicleCenter = {
-			x: -center.x, // Center left-right
-			y: -min.y, // Keep on ground
-			z: -center.z // Center front-rear (wheelbase center)
-		};
-
-		centerOffset = vehicleCenter;
-
-		// Set the model center for OrbitControls to rotate around
-		// This should be at ground level (y=0) and centered on the car
-		modelCenter = {
-			x: 0,
-			y: 0,
-			z: 0
-		};
-
-		// Setup shadows and materials
+		
 		scene.traverse((child: any) => {
-			if (child.isMesh) {
-				child.castShadow = true;
-				child.receiveShadow = true;
-				if (child.material) {
-					child.material.needsUpdate = true;
+			if (child.isMesh && child.material) {
+				const material = child.material;
+				const materialName = material.name || 'unnamed';
+				
+				// Check if we're in debug mode (individual material colors)
+				if (isDebugMode && materialColors[materialName]) {
+					// Debug mode: Apply specific color for this material
+					console.log('Applying debug color to:', materialName, materialColors[materialName]);
+					material.color = new THREE.Color(materialColors[materialName]);
+					material.needsUpdate = true;
+				} else {
+					// Normal mode: Apply selectedColor to car body materials only
+					const lowerName = materialName.toLowerCase();
+					let shouldApplyColor = false;
+					
+					if (model.includes('maybach')) {
+						// Maybach: Car_Paint_With_Flakes is the body
+						shouldApplyColor = materialName === 'Car_Paint_With_Flakes';
+					} else if (model.includes('honda')) {
+						// Honda: Need to identify the correct material via debug (camera was too far)
+						shouldApplyColor = materialName === 'material';
+					} else if (model.includes('mazda')) {
+						// Mazda: material is the body
+						shouldApplyColor = materialName === 'material';
+					} else {
+						// Fallback: Conservative approach
+						shouldApplyColor = lowerName.includes('paint') || materialName === 'material';
+					}
+						
+					if (shouldApplyColor) {
+						material.color = new THREE.Color(selectedColor);
+						material.needsUpdate = true;
+					}
 				}
 			}
 		});
-
-		// Report model as loaded
-		if (loadingContext) {
-			loadingContext.updateAsset('3d-model', 'loaded');
-		}
 	}
+
+	// Legacy function for backwards compatibility
+	function applyColorToMaterials(scene: any, color: string) {
+		console.log('Applying color:', color);
+		let materialsFound: string[] = [];
+		let materialsChanged: string[] = [];
+		
+		scene.traverse((child: any) => {
+			if (child.isMesh && child.material) {
+				const material = child.material;
+				const materialName = material.name || 'unnamed';
+				materialsFound.push(materialName);
+				
+				// Model-specific material targeting
+				const lowerName = materialName.toLowerCase();
+				let shouldApplyColor = false;
+				
+				if (model.includes('maybach')) {
+					// Maybach: Car_Paint_With_Flakes is the body
+					shouldApplyColor = materialName === 'Car_Paint_With_Flakes';
+				} else if (model.includes('honda')) {
+					// Honda: Need to identify the correct material via debug (camera was too far)
+					shouldApplyColor = materialName === 'material';
+				} else if (model.includes('mazda')) {
+					// Mazda: material is the body
+					shouldApplyColor = materialName === 'material';
+				} else {
+					// Fallback: Conservative approach
+					shouldApplyColor = lowerName.includes('paint') || materialName === 'material';
+				}
+					
+				if (shouldApplyColor) {
+					console.log('Applying color to material:', materialName);
+					material.color = new THREE.Color(color);
+					material.needsUpdate = true;
+					materialsChanged.push(materialName);
+				}
+			}
+		});
+		console.log('All materials found:', materialsFound);
+		console.log('Materials changed:', materialsChanged);
+	}
+
 </script>
 
 <T.PerspectiveCamera makeDefault position={objectPosition} fov={45} near={0.1} far={100}>
@@ -117,53 +201,55 @@
 	/>
 </T.PerspectiveCamera>
 
-<!-- Enhanced lighting setup for premium automotive showcase -->
-<!-- Main key light (from front-right) -->
+<!-- Optimized automotive lighting setup (5 lights total) -->
+<!-- Main key light with optimized shadows -->
 <T.DirectionalLight
 	position={[10, 15, 10]}
-	intensity={2.5}
+	intensity={2.2}
 	castShadow
-	shadow.camera.left={-10}
-	shadow.camera.right={10}
-	shadow.camera.top={10}
-	shadow.camera.bottom={-10}
-	shadow.mapSize.width={2048}
-	shadow.mapSize.height={2048}
+	shadow.camera.left={-8}
+	shadow.camera.right={8}
+	shadow.camera.top={8}
+	shadow.camera.bottom={-8}
+	shadow.mapSize.width={1024}
+	shadow.mapSize.height={1024}
+	shadow.bias={-0.001}
 />
 
-<!-- Fill light (from back-left) -->
-<T.DirectionalLight position={[-8, 12, -8]} intensity={1.2} />
+<!-- Fill light (no shadows for performance) -->
+<T.DirectionalLight position={[-8, 10, -5]} intensity={1.0} />
 
-<!-- Rim light (from behind) -->
-<T.DirectionalLight position={[0, 8, -15]} intensity={1.8} />
+<!-- Ambient lighting for overall illumination -->
+<T.AmbientLight intensity={0.7} />
 
-<!-- Ambient base lighting -->
-<T.AmbientLight intensity={0.6} />
+<!-- Hemisphere light for natural sky/ground lighting -->
+<T.HemisphereLight color={0xffffff} groundColor={0x444444} intensity={0.8} />
 
-<!-- Front accent spotlights -->
-<T.SpotLight position={[6, 8, 6]} angle={0.4} penumbra={0.6} intensity={2} castShadow />
-<T.SpotLight position={[-6, 8, 6]} angle={0.4} penumbra={0.6} intensity={1.8} />
-
-<!-- Side highlighting -->
-<T.SpotLight position={[12, 6, 0]} angle={0.5} penumbra={0.7} intensity={1.5} />
-<T.SpotLight position={[-12, 6, 0]} angle={0.5} penumbra={0.7} intensity={1.3} />
-
-<!-- Ground/undercarriage lighting -->
-<T.SpotLight position={[0, 2, 8]} angle={0.8} penumbra={0.8} intensity={1} />
-
-<!-- Rear accent light -->
-<T.SpotLight position={[0, 10, -8]} angle={0.6} penumbra={0.5} intensity={1.2} />
+<!-- Single accent spotlight for highlights -->
+<T.SpotLight
+	position={[0, 12, 0]}
+	angle={0.6}
+	penumbra={0.8}
+	intensity={1.5}
+	target.position={[0, 0, 0]}
+/>
 
 <!-- Wrapper group to center the model properly -->
 <T.Group>
-	<GLTF
-		url={model}
-		{scale}
-		position={[centerOffset.x, centerOffset.y, centerOffset.z]}
-		castShadow
-		receiveShadow
-		on:load={handleLoad}
-		on:progress={handleProgress}
-		on:error={handleError}
-	/>
+	{#await gltf}
+		<!-- Loading state -->
+		<T.Group>
+			<!-- Empty while loading -->
+		</T.Group>
+	{:then loadedGltf}
+		<!-- Use the scene directly like a regular GLTF component -->
+		<T.Group {scale} position={[centerOffset.x, centerOffset.y, centerOffset.z]}>
+			<T is={loadedGltf.scene} />
+		</T.Group>
+	{:catch error}
+		<T.Group>
+			<!-- Error state -->
+			{console.error('GLTF render error:', error)}
+		</T.Group>
+	{/await}
 </T.Group>

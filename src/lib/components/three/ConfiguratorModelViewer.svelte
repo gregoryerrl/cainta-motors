@@ -10,10 +10,17 @@
 		target = [0, 0, 0],
 		selectedColor = '#ffffff',
 		accessory = 0
-	}: { scale?: number; objectPosition?: any; model?: string; target?: any; selectedColor?: string; accessory?: number } = $props();
-	
+	}: {
+		scale?: number;
+		objectPosition?: any;
+		model?: string;
+		target?: any;
+		selectedColor?: string;
+		accessory?: number;
+	} = $props();
+
 	let autoRotate = $state(false); // Disabled for configurator - user controls
-	
+
 	// Determine which car to show based on model path
 	const selectedCar = $derived(() => {
 		if (model.includes('car1')) return 'car1';
@@ -39,44 +46,40 @@
 	/>
 </T.PerspectiveCamera>
 
-<!-- Enhanced lighting setup for premium automotive showcase -->
-<!-- Main key light (from front-right) -->
+<!-- Optimized automotive lighting setup (5 lights total) -->
+<!-- Main key light with optimized shadows -->
 <T.DirectionalLight
 	position={[10, 15, 10]}
-	intensity={2.5}
+	intensity={2.2}
 	castShadow
-	shadow.camera.left={-10}
-	shadow.camera.right={10}
-	shadow.camera.top={10}
-	shadow.camera.bottom={-10}
-	shadow.mapSize.width={2048}
-	shadow.mapSize.height={2048}
+	shadow.camera.left={-8}
+	shadow.camera.right={8}
+	shadow.camera.top={8}
+	shadow.camera.bottom={-8}
+	shadow.mapSize.width={1024}
+	shadow.mapSize.height={1024}
+	shadow.bias={-0.001}
 />
 
-<!-- Fill light (from back-left) -->
-<T.DirectionalLight position={[-8, 12, -8]} intensity={1.2} />
+<!-- Fill light (no shadows for performance) -->
+<T.DirectionalLight position={[-8, 10, -5]} intensity={1.0} />
 
-<!-- Rim light (from behind) -->
-<T.DirectionalLight position={[0, 8, -15]} intensity={1.8} />
+<!-- Ambient lighting for overall illumination -->
+<T.AmbientLight intensity={0.7} />
 
-<!-- Ambient base lighting -->
-<T.AmbientLight intensity={0.6} />
+<!-- Hemisphere light for natural sky/ground lighting -->
+<T.HemisphereLight color={0xffffff} groundColor={0x444444} intensity={0.8} />
 
-<!-- Front accent spotlights -->
-<T.SpotLight position={[6, 8, 6]} angle={0.4} penumbra={0.6} intensity={2} castShadow />
-<T.SpotLight position={[-6, 8, 6]} angle={0.4} penumbra={0.6} intensity={1.8} />
-
-<!-- Side highlighting -->
-<T.SpotLight position={[12, 6, 0]} angle={0.5} penumbra={0.7} intensity={1.5} />
-<T.SpotLight position={[-12, 6, 0]} angle={0.5} penumbra={0.7} intensity={1.3} />
-
-<!-- Ground/undercarriage lighting -->
-<T.SpotLight position={[0, 2, 8]} angle={0.8} penumbra={0.8} intensity={1} />
-
-<!-- Rear accent light -->
-<T.SpotLight position={[0, 10, -8]} angle={0.6} penumbra={0.5} intensity={1.2} />
+<!-- Single accent spotlight for highlights -->
+<T.SpotLight
+	position={[0, 12, 0]}
+	angle={0.6}
+	penumbra={0.8}
+	intensity={1.5}
+	target.position={[0, 0, 0]}
+/>
 
 <!-- Car models with color change capability -->
-<T.Group scale={scale}>
+<T.Group {scale}>
 	<CarSelector selectedCar={selectedCar()} {selectedColor} {accessory} />
 </T.Group>

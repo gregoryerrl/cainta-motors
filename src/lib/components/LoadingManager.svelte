@@ -14,27 +14,32 @@
 	let assets = $state<Record<string, Asset>>({});
 	let isGlobalLoading = $state(true);
 	let globalProgress = $state(0);
-	let minLoadingTime = $state(false);
+	let hasInitialLoad = $state(false);
 
-	// Set minimum loading time to prevent flash
+	// Quick initial check - if no assets registered within 100ms, skip loading screen
 	setTimeout(() => {
-		console.log('⏰ Minimum loading time elapsed');
-		minLoadingTime = true;
-		updateGlobalState();
-	}, 1000);
+		if (Object.keys(assets).length === 0) {
+			console.log('⚡ No assets to load, skipping loading screen');
+			isGlobalLoading = false;
+			globalProgress = 100;
+			hasInitialLoad = true;
+		}
+	}, 100);
 
-	// Fallback timeout - force completion after 10 seconds
+	// Fallback timeout - force completion after 5 seconds (reduced from 10)
 	setTimeout(() => {
-		console.log('🚨 Fallback timeout - forcing completion');
-		const assetList = Object.values(assets);
-		assetList.forEach(asset => {
-			if (asset.status === 'pending' || asset.status === 'loading') {
-				console.log('🚨 Forcing asset to complete:', asset.id);
-				assets[asset.id] = { ...asset, status: 'loaded' };
-			}
-		});
-		updateGlobalState();
-	}, 10000);
+		if (isGlobalLoading) {
+			console.log('⚠️ Loading timeout - forcing completion');
+			const assetList = Object.values(assets);
+			assetList.forEach((asset) => {
+				if (asset.status === 'pending' || asset.status === 'loading') {
+					console.log('⚠️ Marking slow asset as loaded:', asset.id);
+					assets[asset.id] = { ...asset, status: 'loaded' };
+				}
+			});
+			updateGlobalState();
+		}
+	}, 5000);
 
 	// Register an asset for tracking
 	function registerAsset(id: string): void {
@@ -56,7 +61,7 @@
 	function updateGlobalState(): void {
 		const assetList = Object.values(assets);
 
-		if (assetList.length === 0) {
+		if (assetList.length === 0 && hasInitialLoad) {
 			isGlobalLoading = false;
 			globalProgress = 100;
 			return;
@@ -67,19 +72,18 @@
 		const totalAssets = assetList.length;
 
 		// Calculate progress (loaded + errors count as "complete")
-		globalProgress = Math.round(((loadedCount + errorCount) / totalAssets) * 100);
+		globalProgress =
+			totalAssets > 0 ? Math.round(((loadedCount + errorCount) / totalAssets) * 100) : 0;
 
-		// All assets loaded/errored and minimum time elapsed
-		isGlobalLoading = !(globalProgress === 100 && minLoadingTime);
-		
+		// Loading complete when all assets are loaded/errored
+		isGlobalLoading = globalProgress < 100;
+
 		console.log('🔄 Global state:', {
 			totalAssets,
 			loadedCount,
 			errorCount,
 			globalProgress,
-			minLoadingTime,
-			isGlobalLoading,
-			assets: assetList
+			isGlobalLoading
 		});
 	}
 

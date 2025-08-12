@@ -1,8 +1,12 @@
 <script lang="ts">
 	import type { Vehicle } from '$lib/data/vehicles';
 	import { ArrowRight } from 'lucide-svelte';
+	import LazyScene from '$lib/components/three/LazyScene.svelte';
 
 	let { vehicle }: { vehicle: Vehicle } = $props();
+
+	let selectedColor = $state(vehicle.colors.find(c => c.hex === '#000000') || vehicle.colors.find(c => c.hex.toLowerCase().includes('black')) || vehicle.colors[0]);
+	let showColorPicker = $state(false);
 
 	const formatPrice = (price: number) => {
 		return new Intl.NumberFormat('en-PH', {
@@ -16,12 +20,96 @@
 <article
 	class="group relative border border-gray-800 bg-black transition-all hover:border-gray-600"
 >
-	<div class="aspect-[4/3] overflow-hidden">
-		<img
-			src={vehicle.image}
-			alt="{vehicle.brand} {vehicle.model} {vehicle.variant}"
-			class="h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-80"
-		/>
+	<div class="relative aspect-[4/3] overflow-hidden">
+		{#if vehicle.has3DModel && vehicle.modelPath}
+			<!-- 3D Model Viewer -->
+			<div class="h-full w-full bg-black">
+				<LazyScene
+					model={vehicle.modelPath}
+					scale={vehicle.modelScale}
+					objectPosition={vehicle.modelPosition}
+					target={vehicle.modelTarget}
+					selectedColor={vehicle.supportsColorChange ? selectedColor.hex : undefined}
+					priority={false}
+				/>
+			</div>
+		{:else}
+			<!-- Regular Image -->
+			<img
+				src={vehicle.image}
+				alt="{vehicle.brand} {vehicle.model} {vehicle.variant}"
+				class="h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-80"
+			/>
+		{/if}
+
+		<!-- 3D Model Badge -->
+		<div class="absolute top-3 right-3">
+			{#if vehicle.has3DModel}
+				<div
+					class="flex items-center gap-1 bg-red-900/80 px-2 py-1 text-xs font-thin tracking-wider text-white"
+				>
+					<svg
+						class="h-3 w-3"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+					3D
+				</div>
+			{:else}
+				<div
+					class="flex items-center gap-1 bg-gray-700/80 px-2 py-1 text-xs font-thin tracking-wider text-gray-300"
+				>
+					<svg
+						class="h-3 w-3"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+							clip-rule="evenodd"
+						></path>
+					</svg>
+					PHOTOS
+				</div>
+			{/if}
+		</div>
+
+		<!-- Color Picker for supported models -->
+		{#if vehicle.supportsColorChange && vehicle.colors.length > 0}
+			<div class="absolute bottom-3 left-3">
+				<button
+					onclick={() => (showColorPicker = !showColorPicker)}
+					class="flex items-center gap-2 bg-black/80 px-3 py-2 text-xs font-thin tracking-wider text-white transition-all hover:bg-black/90"
+				>
+					<div class="h-3 w-3 rounded-full border border-gray-400" style="background-color: {selectedColor.hex}"></div>
+					{selectedColor.name}
+				</button>
+
+				{#if showColorPicker}
+					<div class="absolute bottom-full left-0 mb-2 bg-black/90 border border-gray-700 p-3">
+						<div class="grid grid-cols-2 gap-2">
+							{#each vehicle.colors as color}
+								<button
+									onclick={() => {
+										selectedColor = color;
+										showColorPicker = false;
+									}}
+									class="flex items-center gap-2 px-2 py-1 text-xs font-thin text-white transition-all hover:bg-white/10 {selectedColor.hex === color.hex ? 'bg-red-900/20' : ''}"
+								>
+									<div class="h-3 w-3 rounded-full border border-gray-400" style="background-color: {color.hex}"></div>
+									<span class="truncate">{color.name}</span>
+								</button>
+							{/each}
+						</div>
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</div>
 
 	<div class="p-6">

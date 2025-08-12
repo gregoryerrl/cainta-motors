@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Scene from '$lib/components/three/Scene.svelte';
+	import LazyScene from '$lib/components/three/LazyScene.svelte';
+	import NoModelScene from '$lib/components/three/NoModelScene.svelte';
 	import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -9,19 +10,7 @@
 	let currentImageIndex = $state(0);
 	let selectedColor = $state(vehicle.colors[0]);
 	let showSpecs = $state(false);
-	let isModelLoading = $state(true);
-	
-	// Handle model load completion
-	$effect(() => {
-		if (vehicle.modelPath) {
-			// Give time for model to load
-			setTimeout(() => {
-				isModelLoading = false;
-			}, 2000);
-		} else {
-			isModelLoading = false;
-		}
-	});
+	let isModelLoading = $state(false);
 
 	const formatPrice = (price: number) => {
 		return new Intl.NumberFormat('en-PH', {
@@ -57,49 +46,45 @@
 	</div>
 
 	<!-- Hero Section -->
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
+	<div class="mx-auto mt-12 max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="text-center">
-			<h1 class="text-5xl font-thin text-white md:text-7xl tracking-wider">
-				{vehicle.brand} {vehicle.model}
+			<h1 class="text-5xl font-thin tracking-wider text-white md:text-7xl">
+				{vehicle.brand}
+				{vehicle.model}
 			</h1>
-			<p class="mt-4 text-2xl font-thin text-gray-500 tracking-widest uppercase">
+			<p class="mt-4 text-2xl font-thin tracking-widest text-gray-500 uppercase">
 				{vehicle.variant}
 			</p>
 			<div class="mt-8">
-				<p class="text-xs font-thin text-gray-600 tracking-widest uppercase">Starting from</p>
-				<p class="text-4xl font-thin text-red-900 mt-2">{formatPrice(vehicle.price)}</p>
+				<p class="text-xs font-thin tracking-widest text-gray-600 uppercase">Starting from</p>
+				<p class="mt-2 text-4xl font-thin text-red-900">{formatPrice(vehicle.price)}</p>
 			</div>
 		</div>
 	</div>
 
 	<!-- Main Content Grid -->
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
+	<div class="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
 		<div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
 			<!-- Left Column - 3D Model and Gallery -->
 			<div class="space-y-8">
-				{#if vehicle.modelPath}
-					<div class="aspect-video overflow-hidden bg-white/6 border border-gray-800 relative">
-						<Scene 
-							class="h-full w-full" 
+				<div class="relative aspect-video overflow-hidden border border-gray-800 bg-white/6">
+					{#if vehicle.has3DModel && vehicle.modelPath}
+						<LazyScene
+							class="h-full w-full"
 							model={vehicle.modelPath}
 							scale={vehicle.modelScale || 1}
 							objectPosition={vehicle.modelPosition || [4, 2, 4]}
 							target={vehicle.modelTarget || [0, 0, 0]}
+							selectedColor={selectedColor.hex}
+							priority={true}
 						/>
-						
-						{#if isModelLoading}
-							<div class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-								<div class="flex flex-col items-center gap-4">
-									<div class="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-white"></div>
-									<p class="text-xs font-thin text-gray-300 tracking-widest uppercase">Loading 3D Model</p>
-								</div>
-							</div>
-						{/if}
-					</div>
-				{/if}
+					{:else}
+						<NoModelScene class="h-full w-full" />
+					{/if}
+				</div>
 
 				<!-- Main Image Display -->
-				<div class="relative aspect-video overflow-hidden bg-white/6 border border-gray-800 group">
+				<div class="group relative aspect-video overflow-hidden border border-gray-800 bg-white/6">
 					<img
 						src={vehicle.images[currentImageIndex]}
 						alt="{vehicle.brand} {vehicle.model}"
@@ -109,20 +94,22 @@
 					{#if vehicle.images.length > 1}
 						<button
 							onclick={prevImage}
-							class="absolute top-1/2 left-4 -translate-y-1/2 bg-black/50 backdrop-blur-sm p-3 border border-gray-700 transition-all hover:bg-black/70 hover:border-gray-600"
+							class="absolute top-1/2 left-4 -translate-y-1/2 border border-gray-700 bg-black/50 p-3 backdrop-blur-sm transition-all hover:border-gray-600 hover:bg-black/70"
 						>
 							<ChevronLeft class="h-4 w-4 text-white" />
 						</button>
 						<button
 							onclick={nextImage}
-							class="absolute top-1/2 right-4 -translate-y-1/2 bg-black/50 backdrop-blur-sm p-3 border border-gray-700 transition-all hover:bg-black/70 hover:border-gray-600"
+							class="absolute top-1/2 right-4 -translate-y-1/2 border border-gray-700 bg-black/50 p-3 backdrop-blur-sm transition-all hover:border-gray-600 hover:bg-black/70"
 						>
 							<ChevronRight class="h-4 w-4 text-white" />
 						</button>
 					{/if}
 
 					<!-- Image Counter -->
-					<div class="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm px-3 py-1 border border-gray-700">
+					<div
+						class="absolute right-4 bottom-4 border border-gray-700 bg-black/50 px-3 py-1 backdrop-blur-sm"
+					>
 						<span class="text-xs font-thin text-gray-300">
 							{currentImageIndex + 1} / {vehicle.images.length}
 						</span>
@@ -148,7 +135,7 @@
 			<div class="space-y-12">
 				<!-- Color Selection -->
 				<div>
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">
 						Exterior Color
 					</h3>
 					<div class="flex gap-4">
@@ -163,9 +150,12 @@
 							>
 								{#if selectedColor.hex === color.hex}
 									<div class="absolute inset-0 flex items-center justify-center">
-										<div class="h-2 w-2 rounded-full {color.hex === '#000000' || color.hex === '#4a4a4a'
-											? 'bg-white'
-											: 'bg-black'}"></div>
+										<div
+											class="h-2 w-2 rounded-full {color.hex === '#000000' ||
+											color.hex === '#4a4a4a'
+												? 'bg-white'
+												: 'bg-black'}"
+										></div>
 									</div>
 								{/if}
 							</button>
@@ -176,14 +166,16 @@
 
 				<!-- Key Features -->
 				<div>
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">
 						Key Features
 					</h3>
 					<div class="grid grid-cols-1 gap-4">
 						{#each vehicle.features.slice(0, 6) as feature}
-							<div class="flex items-start gap-3 group">
-								<div class="h-1 w-1 bg-red-900 mt-2 group-hover:bg-red-800 transition-colors"></div>
-								<span class="text-sm font-thin text-gray-300 group-hover:text-white transition-colors">
+							<div class="group flex items-start gap-3">
+								<div class="mt-2 h-1 w-1 bg-red-900 transition-colors group-hover:bg-red-800"></div>
+								<span
+									class="text-sm font-thin text-gray-300 transition-colors group-hover:text-white"
+								>
 									{feature}
 								</span>
 							</div>
@@ -192,7 +184,7 @@
 				</div>
 
 				<!-- Action Buttons -->
-				<div class="space-y-4 pt-8 border-t border-gray-800">
+				<div class="space-y-4 border-t border-gray-800 pt-8">
 					<a
 						href="/configurator"
 						class="block w-full border border-red-900 px-8 py-4 text-center text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-red-900/20"
@@ -211,8 +203,8 @@
 	</div>
 
 	<!-- Specifications Section -->
-	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-24">
-		<div class="text-center mb-12">
+	<div class="mx-auto mt-24 max-w-7xl px-4 sm:px-6 lg:px-8">
+		<div class="mb-12 text-center">
 			<button
 				onclick={() => (showSpecs = !showSpecs)}
 				class="inline-flex items-center gap-2 border border-gray-700 px-8 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:border-gray-600 hover:bg-white/5"
@@ -222,23 +214,23 @@
 		</div>
 
 		{#if showSpecs}
-			<div class="grid grid-cols-1 gap-px bg-gray-800 border border-gray-800 md:grid-cols-3">
+			<div class="grid grid-cols-1 gap-px border border-gray-800 bg-gray-800 md:grid-cols-3">
 				<!-- Engine Specs -->
 				<div class="bg-black p-8">
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">
 						Performance
 					</h3>
 					<dl class="space-y-4">
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Engine</dt>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Engine</dt>
 							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.engine}</dd>
 						</div>
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Power Output</dt>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Power Output</dt>
 							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.power}</dd>
 						</div>
 						<div>
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Torque</dt>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Torque</dt>
 							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.torque}</dd>
 						</div>
 					</dl>
@@ -246,73 +238,83 @@
 
 				<!-- Drivetrain Specs -->
 				<div class="bg-black p-8">
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
-						Drivetrain
-					</h3>
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">Drivetrain</h3>
 					<dl class="space-y-4">
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Transmission</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.transmission}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Transmission</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.transmission}
+							</dd>
 						</div>
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Drive Type</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.drivetrain}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Drive Type</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.drivetrain}
+							</dd>
 						</div>
 						<div>
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Fuel Type</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.fuelType}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Fuel Type</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.fuelType}
+							</dd>
 						</div>
 					</dl>
 				</div>
 
 				<!-- Dimensions -->
 				<div class="bg-black p-8">
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
-						Dimensions
-					</h3>
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">Dimensions</h3>
 					<dl class="space-y-4">
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Length</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.dimensions.length}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Length</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.dimensions.length}
+							</dd>
 						</div>
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Width</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.dimensions.width}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Width</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.dimensions.width}
+							</dd>
 						</div>
 						<div>
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Height</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.dimensions.height}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Height</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.dimensions.height}
+							</dd>
 						</div>
 					</dl>
 				</div>
 			</div>
 
 			<!-- Additional Specs -->
-			<div class="grid grid-cols-1 gap-px bg-gray-800 border border-gray-800 mt-px md:grid-cols-2">
+			<div class="mt-px grid grid-cols-1 gap-px border border-gray-800 bg-gray-800 md:grid-cols-2">
 				<div class="bg-black p-8">
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
-						Capacity
-					</h3>
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">Capacity</h3>
 					<dl class="space-y-4">
 						<div class="border-b border-gray-800 pb-4">
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Seating</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.seatingCapacity} Passengers</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Seating</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.seatingCapacity} Passengers
+							</dd>
 						</div>
 						<div>
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Fuel Tank</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.fuelCapacity}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Fuel Tank</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.fuelCapacity}
+							</dd>
 						</div>
 					</dl>
 				</div>
 
 				<div class="bg-black p-8">
-					<h3 class="text-xs font-thin tracking-widest text-gray-500 uppercase mb-6">
-						Wheelbase
-					</h3>
+					<h3 class="mb-6 text-xs font-thin tracking-widest text-gray-500 uppercase">Wheelbase</h3>
 					<dl class="space-y-4">
 						<div>
-							<dt class="text-xs font-thin text-gray-600 uppercase tracking-wider">Distance</dt>
-							<dd class="mt-1 text-sm font-thin text-gray-300">{vehicle.specifications.dimensions.wheelbase}</dd>
+							<dt class="text-xs font-thin tracking-wider text-gray-600 uppercase">Distance</dt>
+							<dd class="mt-1 text-sm font-thin text-gray-300">
+								{vehicle.specifications.dimensions.wheelbase}
+							</dd>
 						</div>
 					</dl>
 				</div>
@@ -321,14 +323,15 @@
 	</div>
 
 	<!-- Bottom CTA -->
-	<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-24 text-center">
+	<div class="mx-auto mt-24 max-w-4xl px-4 text-center sm:px-6 lg:px-8">
 		<div class="border border-gray-800 bg-white/6 p-12">
-			<h2 class="text-2xl font-thin text-white tracking-wider">Ready to Experience Excellence?</h2>
-			<p class="mt-4 text-sm font-thin text-gray-500 max-w-2xl mx-auto">
-				Visit our showroom to see the {vehicle.brand} {vehicle.model} {vehicle.variant} in person,
-				or contact our team for a personalized consultation.
+			<h2 class="text-2xl font-thin tracking-wider text-white">Ready to Experience Excellence?</h2>
+			<p class="mx-auto mt-4 max-w-2xl text-sm font-thin text-gray-500">
+				Visit our showroom to see the {vehicle.brand}
+				{vehicle.model}
+				{vehicle.variant} in person, or contact our team for a personalized consultation.
 			</p>
-			<div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+			<div class="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
 				<a
 					href="/contact"
 					class="inline-block border border-red-900 px-8 py-3 text-xs font-light tracking-widest text-white uppercase transition-all hover:bg-red-900/20"

@@ -25,7 +25,7 @@
 		{@render children?.()}
 	</main>
 	<Footer />
-	
+
 	<!-- Loading screen overlay - positioned last for proper z-index layering -->
 	<LoadingScreen />
 </LoadingManager>

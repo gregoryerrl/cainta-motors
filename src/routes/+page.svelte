@@ -1,7 +1,7 @@
 <script lang="ts">
 	import VideoHero from '$lib/components/home/VideoHero.svelte';
 	import EngineeringExcellence from '$lib/components/home/EngineeringExcellence.svelte';
-	import Scene from '$lib/components/three/Scene.svelte';
+	import LazyScene from '$lib/components/three/LazyScene.svelte';
 	import Gallery from '$lib/components/home/Gallery.svelte';
 	import VehicleCard from '$lib/components/ui/VehicleCard.svelte';
 	import { vehicles } from '$lib/data/vehicles';
@@ -18,19 +18,21 @@
 	<div class="absolute inset-0 grid grid-cols-1 lg:grid-cols-2">
 		<!-- Left: 3D Model (Full height) -->
 		<div class="relative hidden h-full bg-white/6 lg:block">
-			<Scene
+			<LazyScene
 				class="h-full w-full"
 				scale={0.5}
 				objectPosition={[4, 2, 4]}
-				model="/mercedes-benz_maybach_2022.glb"
+				model="/gltf/mercedes-benz_maybach_2022/scene.gltf"
+				selectedColor="#000000"
 			/>
 		</div>
 		<div class="relative h-[40vh] bg-white/6 pt-16 lg:hidden">
-			<Scene
+			<LazyScene
 				class="h-full w-full"
 				scale={1}
 				objectPosition={[4, 2, 4]}
-				model="/mercedes-benz_maybach_2022.glb"
+				model="/gltf/mercedes-benz_maybach_2022/scene.gltf"
+				selectedColor="#000000"
 			/>
 		</div>
 
